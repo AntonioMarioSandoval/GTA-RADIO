@@ -3,7 +3,7 @@ const stations = [
         name: "EMOTION 98.3",
         url: "https://archive.org/download/gtavc_radiofull/EMOTION.mp3",
         duration: 372,
-        logo: "Emotion_983.webp" 
+        logo: "https://static.wikia.nocookie.net/esgta/images/e/e7/Emotion_98.3.png/revision/latest/scale-to-width-down/170?cb=20130701212121" 
     },
     {
         name: "Espantoso",
@@ -120,7 +120,7 @@ function updateUI(direction = 'none') {
     if (isPlaying) {
         stationNameTop.innerText = "ESTAS ESCUCHANDO: " + currentStation.name;
     } else {
-        stationNameTop.innerText = "OFFLINE: " + currentStation.name;
+        stationNameTop.innerText = "APAGADO: " + currentStation.name;
     }
 
     const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
