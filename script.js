@@ -51,7 +51,7 @@ const stations = [
         name: "Wildstyle",
         url: "https://archive.org/download/gtavc_radiofull/WILD.mp3",
         duration: 344,
-        logo: "https://static.wikia.nocookie.net/esgta/images/2/24/Wave_103.png/revision/latest/scale-to-width-down/170?cb=20130627225002" 
+        logo: "https://static.wikia.nocookie.net/esgta/images/d/dd/WildstyleLogo.png/revision/latest/scale-to-width-down/150?cb=20140611115150" 
     }
 ];
 
