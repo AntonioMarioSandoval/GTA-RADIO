@@ -67,7 +67,6 @@ const volumeSlider = document.getElementById('volume-slider');
 const carouselContainer = document.getElementById('carousel-container');
 const visualizerBars = document.querySelectorAll('.visualizer-bar');
 
-// Referencias para el control inteligente del volumen
 const volumeContainer = document.getElementById('volume-container');
 const volumePopup = document.getElementById('volume-popup');
 
@@ -216,14 +215,14 @@ function togglePower() {
     updateUI('none');
     
     if (isPlaying) {
-        toggleBtn.className = "flex flex-col items-center justify-center bg-secondary-container text-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] border-2 border-secondary-container transition-colors glow-neon-cyan";
+        toggleBtn.className = "flex flex-col items-center justify-center bg-secondary-container text-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] border-2 border-secondary-container transition-colors glow-neon-cyan";
         
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
         playRadio();
     } else {
-        toggleBtn.className = "flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] hover:bg-secondary hover:text-black transition-colors";
+        toggleBtn.className = "flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-secondary hover:text-black transition-colors";
         clearTimeout(radioTimeout);
         audioPlayer.pause();
         audioPlayer.src = ""; 
@@ -242,19 +241,14 @@ function changeStation(direction) {
     if (isPlaying) playRadio(); 
 }
 
-// ==========================================
-// CONTROL ESTABLE DEL MENÚ DE VOLUMEN (Sin parpadeos)
-// ==========================================
 let volumeTimeout;
 
-// Mostrar al pasar el mouse o hacer clic
 volumeContainer.addEventListener('mouseenter', () => {
     clearTimeout(volumeTimeout);
     volumePopup.classList.remove('hidden');
     volumePopup.classList.add('flex');
 });
 
-// Ocultar al retirar el mouse con un pequeño respiro (delay de 300ms)
 volumeContainer.addEventListener('mouseleave', () => {
     volumeTimeout = setTimeout(() => {
         volumePopup.classList.remove('flex');
@@ -262,9 +256,7 @@ volumeContainer.addEventListener('mouseleave', () => {
     }, 300);
 });
 
-// También permitimos alternar con un clic para dispositivos táctiles o comodidad
 volumeContainer.addEventListener('click', (e) => {
-    // Evitamos que se cierre si interactúan directo con el slider
     if (e.target === volumeSlider) return;
     
     if (volumePopup.classList.contains('hidden')) {

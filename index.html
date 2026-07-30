@@ -18,7 +18,7 @@
                         "primary": "#ffabf3",
                         "secondary": "#ffffff",
                         "secondary-container": "#00fbfb",
-                        "surface-dim": "#131313",
+                        "surface-dim": "#523F4C",
                         "surface-variant": "#353535",
                         "surface-container": "#20201f",
                         "background": "#131313",
@@ -72,26 +72,59 @@
             100% { transform: translateX(0); opacity: 1; } 
         }
         
+        /* ==============================================================
+           OPTIMIZACIÓN EXTREMA PARA MÓVILES EN HORIZONTAL (LANDSCAPE)
+           ============================================================== */
         @media (max-height: 500px) and (orientation: landscape) {
-            .main-container { padding-top: 4.5rem !important; padding-bottom: 4.5rem !important; }
-            .station-header { margin-bottom: 0.5rem !important; }
-            .visualizer-container { margin-top: 0.5rem !important; height: 1.5rem !important; }
-            .cover-active { width: 140px !important; height: 140px !important; padding: 0.5rem !important; }
-            .cover-inactive { width: 100px !important; height: 100px !important; padding: 0.5rem !important; }
-            .arrow-icon { font-size: 1.5rem !important; }
+            /* Header ultrafino */
+            .app-header { padding-top: 2px !important; padding-bottom: 2px !important; border-bottom-width: 2px !important; }
+            .app-header > div:first-child { font-size: 1.1rem !important; } /* Título más chico */
+            .app-header a { padding: 2px 8px !important; font-size: 0.6rem !important; }
+
+            /* Footer ultrafino */
+            .app-footer { padding-top: 2px !important; padding-bottom: 2px !important; border-top-width: 2px !important; }
+            .app-footer > button, .app-footer > div {
+                padding: 2px 10px !important;
+                min-width: auto !important;
+                font-size: 0.6rem !important;
+                line-height: 1 !important;
+            }
+            .app-footer .material-symbols-outlined { font-size: 1.2rem !important; margin-bottom: 0 !important; }
+
+            /* Contenedor central (Espacio liberado) */
+            .main-container { 
+                padding-top: 2rem !important; 
+                padding-bottom: 2.2rem !important; 
+                justify-content: center !important; 
+                gap: 5px !important; /* Juntar los elementos verticalmente */
+            }
+            
+            /* Título de estación compacto */
+            .station-header { margin-bottom: 0 !important; }
+            .station-title-box { font-size: 0.75rem !important; padding: 2px 10px !important; margin-top: 0 !important; }
+            
+            /* Carrusel reducido */
+            .cover-active { width: 90px !important; height: 90px !important; padding: 2px !important; border-width: 2px !important; }
+            .cover-inactive { width: 65px !important; height: 65px !important; padding: 2px !important; border-width: 2px !important; }
+            .arrow-icon { font-size: 1rem !important; }
+            #carousel-container { gap: 1rem !important; }
+
+            /* Ecualizador visible */
+            .visualizer-container { margin-top: 5px !important; height: 18px !important; }
         }
     </style>
 </head>
 <body class="bg-background text-on-background tv-static min-h-screen overflow-hidden flex flex-col font-label-md">
     <div class="scanlines"></div>
 
-    <header class="flex fixed top-0 left-0 w-full z-50 justify-between items-center px-3 md:px-8 py-3 md:py-4 bg-background border-b-4 border-primary drop-shadow-[0_0_10px_rgba(255,171,243,0.8)]">
-        <div class="font-headline-md text-lg md:text-3xl text-primary italic tracking-tighter -skew-x-3">
+    <!-- Header -->
+    <header class="app-header flex fixed top-0 left-0 w-full z-50 justify-between items-center px-3 md:px-8 py-3 md:py-4 bg-background border-b-4 border-primary drop-shadow-[0_0_10px_rgba(255,171,243,0.8)]">
+        <div class="font-headline-md text-base md:text-3xl text-primary italic tracking-tighter -skew-x-3">
             GTA RADIO (VICE CITY VERSION)
         </div>
         
         <nav class="flex gap-2 md:gap-4">
-            <a class="text-on-primary bg-primary border-2 border-black -skew-x-3 px-2 md:px-4 py-1 flex items-center gap-1 md:gap-2 text-xs md:text-base" href="#">
+            <a class="text-on-primary bg-primary border-2 border-black -skew-x-3 px-2 md:px-4 py-0.5 md:py-1 flex items-center gap-1 md:gap-2 text-[10px] md:text-base" href="#">
                 <span class="inline-block w-1.5 h-1.5 md:w-2 md:h-2 bg-black blink"></span> Estaciones
             </a>
             <a class="hidden sm:block text-primary border-2 border-primary -skew-x-3 px-2 md:px-4 py-1 hover:bg-primary hover:text-black transition-colors text-xs md:text-base" href="#">
@@ -100,10 +133,11 @@
         </nav>
     </header>
 
+    <!-- Main -->
     <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
         
         <div class="station-header mb-12 flex flex-col items-center">
-            <div id="station-name-top" class="bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider">
+            <div id="station-name-top" class="station-title-box bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider">
                 Estas Escuchando: 
             </div>
         </div>
@@ -130,23 +164,22 @@
         </div>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
-        <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] transition-colors">
-            <span class="material-symbols-outlined mb-1">power_settings_new</span>
-            POWER
+    <!-- Footer -->
+    <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
+        <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-colors">
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">power_settings_new</span>
+            <span>POWER</span>
         </button>
 
-        <!-- Contenedor del Botón de Volumen con ID para controlarlo por JS -->
-        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none">
-            <span class="material-symbols-outlined mb-1">volume_up</span>
-            VOLUME
+        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none">
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">volume_up</span>
+            <span>VOLUME</span>
             
-            <!-- Quitamos 'group-hover' y agregamos un ID 'volume-popup' para gestionarlo con JavaScript -->
             <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50">
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
             </div>
         </div>
-    </footer>
+    </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
     <script src="script.js"></script>
