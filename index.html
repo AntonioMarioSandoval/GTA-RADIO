@@ -74,21 +74,22 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* Efecto 103.5 FM */
+        /* Efecto 103.5 FM (Líneas ajustadas para mejor legibilidad) */
         .fm-text-container {
             filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
             transition: filter 0.5s ease;
         }
         .fm-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 900;
             font-style: italic;
+            /* Líneas de color más gruesas (6px) con separaciones pequeñas transparentes (2px) */
             background: repeating-linear-gradient(
                 to bottom,
                 var(--theme-primary, #ffabf3),
-                var(--theme-primary, #ffabf3) 3px,
-                transparent 3px,
-                transparent 5px
+                var(--theme-primary, #ffabf3) 6px,
+                transparent 6px,
+                transparent 8px
             );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -97,7 +98,7 @@
             text-shadow: 0 0 0 transparent;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 3.5rem; }
+            .fm-text { font-size: 2.5rem; }
         }
 
         /* Optimización Landscape Móvil */
@@ -110,10 +111,11 @@
             .app-footer > button, .app-footer > div { padding: 4px 12px !important; min-width: auto !important; font-size: 0.7rem !important; line-height: 1 !important; }
             .app-footer .material-symbols-outlined { font-size: 1.4rem !important; margin-bottom: 2px !important; }
             
-            .main-container { padding-top: 2rem !important; padding-bottom: 6rem !important; justify-content: center !important; gap: 8px !important; }
+            /* Subimos el contenido aún más reduciendo el padding superior a 0.5rem */
+            .main-container { padding-top: 0.5rem !important; padding-bottom: 7rem !important; justify-content: center !important; gap: 8px !important; }
             
             .station-header { margin-bottom: 0 !important; margin-top: 0 !important; }
-            .fm-text { font-size: 1.4rem !important; }
+            .fm-text { font-size: 1.1rem !important; }
             .fm-text-container { filter: drop-shadow(0 0 8px var(--theme-primary, #ffabf3)) !important; }
             
             .cover-active { width: 115px !important; height: 115px !important; padding: 4px !important; border-width: 3px !important; }
@@ -205,7 +207,6 @@
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
-    <!-- Actualización de ruta del script -->
     <script src="js/script.js"></script>
 </body>
 </html>

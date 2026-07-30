@@ -3,10 +3,7 @@ let stations = [];
 const audioPlayer = document.getElementById('audio-player');
 audioPlayer.loop = true; 
 
-// ==========================================
-// AUDIOS GLOBALES UNIFICADOS
-// Rutas actualizadas a la carpeta "audio/"
-// ==========================================
+// Audios globales
 const staticAudio = new Audio('audio/estatica.mp3'); 
 staticAudio.loop = true; 
 const clickAudio = new Audio('audio/click.mp3'); 
@@ -33,7 +30,7 @@ let dataArray;
 let isVisualizerInitialized = false;
 
 // ==========================================
-// CONFIGURACIÓN DE TEMA POR JUEGO (SOLO COLOR)
+// CONFIGURACIÓN DE TEMA POR JUEGO
 // ==========================================
 const gameThemes = {
     'vc.json': { 
@@ -63,7 +60,6 @@ function applyVisualTheme(jsonFile) {
         document.head.appendChild(styleTag);
     }
     
-    // Inyectamos las variables globales CSS para el efecto 103.5 FM y reescribimos los colores
     styleTag.innerHTML = `
         :root {
             --theme-primary: ${theme.primary};
@@ -138,10 +134,11 @@ function updateUI(direction = 'none') {
 
     const currentStation = stations[currentStationIndex];
     
+    // Agregamos "ESTÁS ESCUCHANDO:" al texto principal
     if (isPlaying) {
-        stationNameTop.innerText = currentStation.name;
+        stationNameTop.innerText = "ESTÁS ESCUCHANDO: " + currentStation.name;
     } else {
-        stationNameTop.innerText = "OFF: " + currentStation.name;
+        stationNameTop.innerText = "APAGADO: " + currentStation.name;
     }
 
     const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
@@ -256,7 +253,6 @@ function togglePower() {
 function changeStation(direction) {
     if (stations.length === 0) return;
 
-    // Reproducir el sonido global de clic al cambiar de estación
     clickAudio.currentTime = 0; 
     clickAudio.play().catch(e => console.log("Sonido bloqueado", e));
 
@@ -313,7 +309,6 @@ async function loadStations(jsonFile) {
     try {
         applyVisualTheme(jsonFile);
 
-        // Actualizamos la ruta para buscar en la carpeta "data/"
         const response = await fetch('data/' + jsonFile);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -323,6 +318,11 @@ async function loadStations(jsonFile) {
         currentStationIndex = 0;
         
         updateUI('none');
+        
+        // Si la radio está encendida al cambiar de temática, arranca automáticamente la nueva emisora
+        if (isPlaying) {
+            playRadio();
+        }
 
     } catch (error) {
         console.error(`Error al cargar ${jsonFile}:`, error);
