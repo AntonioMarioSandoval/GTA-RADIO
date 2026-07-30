@@ -1,59 +1,4 @@
-const stations = [
-    {
-        name: "EMOTION 98.3",
-        url: "https://archive.org/download/gtavc_radiofull/EMOTION.mp3",
-        duration: 3480, // 58 minutos en segundos (ejemplo exacto)
-        logo: "https://static.wikia.nocookie.net/esgta/images/e/e7/Emotion_98.3.png/revision/latest/scale-to-width-down/170?cb=20130701212121" 
-    },
-    {
-        name: "Espantoso",
-        url: "https://archive.org/download/gtavc_radiofull/ESPANT.mp3",
-        duration: 3180, // 53 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/a/a8/Espantoso.png/revision/latest/scale-to-width-down/170?cb=20130524193454" 
-    },
-    {
-        name: "Fever 105",
-        url: "https://archive.org/download/gtavc_radiofull/FEVER.mp3",
-        duration: 3600, // 60 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/1/14/Fever_105.png/revision/latest/scale-to-width-down/170?cb=20130701202821" 
-    },
-    {
-        name: "FLASH FM",
-        url: "https://archive.org/download/gtavc_radiofull/FLASH.mp3",
-        duration: 3300, // 55 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/9/90/Flash_FM.png/revision/latest/scale-to-width-down/170?cb=20130701201401" 
-    },
-    {
-        name: "KCHAT",
-        url: "https://archive.org/download/gtavc_radiofull/KCHAT.mp3",
-        duration: 3000, // 50 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/9/90/KCHAT.png/revision/latest/scale-to-width-down/150?cb=20230514095832" 
-    },
-    {
-        name: "VCPR",
-        url: "https://archive.org/download/gtavc_radiofull/VCPR.mp3",
-        duration: 3120, // 52 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/7/79/VCPRLogoVC.PNG/revision/latest/scale-to-width-down/150?cb=20150824195147" 
-    },
-    {
-        name: "VROCK",
-        url: "https://archive.org/download/gtavc_radiofull/VROCK.mp3",
-        duration: 3540, // 59 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/5/56/V-Rock.png/revision/latest/scale-to-width-down/150?cb=20240901223829" 
-    },
-    {
-        name: "WAVE 103",
-        url: "https://archive.org/download/gtavc_radiofull/WAVE.mp3",
-        duration: 3240, // 54 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/2/24/Wave_103.png/revision/latest/scale-to-width-down/170?cb=20130627225002" 
-    },
-    {
-        name: "Wildstyle",
-        url: "https://archive.org/download/gtavc_radiofull/WILD.mp3",
-        duration: 3420, // 57 minutos en segundos
-        logo: "https://static.wikia.nocookie.net/esgta/images/d/dd/WildstyleLogo.png/revision/latest/scale-to-width-down/150?cb=20140611115150" 
-    }
-];
+let stations = []; // La lista ahora arranca vacía y se llena leyendo el JSON
 
 const audioPlayer = document.getElementById('audio-player');
 const staticAudio = new Audio('estatica.mp3'); 
@@ -118,6 +63,9 @@ function renderFrame() {
 }
 
 function updateUI(direction = 'none') {
+    // Protección de seguridad por si tarda en cargar el JSON
+    if (stations.length === 0) return; 
+
     const currentStation = stations[currentStationIndex];
     
     if (isPlaying) {
@@ -199,22 +147,13 @@ function playRadio() {
 
         const station = stations[currentStationIndex];
         
-        // 1. Cargamos el archivo de la estación pero lo mantenemos silenciado
         audioPlayer.src = station.url;
         audioPlayer.volume = 0; 
 
-        // 2. MAGIA DE LA RADIO EN VIVO: Sincronización Mundial Perfecta
         audioPlayer.onloadedmetadata = () => {
-            // Obtenemos el tiempo global en segundos
             const now = Math.floor(Date.now() / 1000);
-            
-            // Usamos la duración FIJA provista en el arreglo
             const currentSecond = now % station.duration;
-            
-            // Adelantamos la canción a ese punto exacto
             audioPlayer.currentTime = currentSecond;
-            
-            // Y finalmente le damos play
             audioPlayer.play().catch(error => console.error("Error al reproducir:", error));
         };
 
@@ -222,6 +161,8 @@ function playRadio() {
 }
 
 function togglePower() {
+    if (stations.length === 0) return; // Si no cargó el JSON, no hace nada
+
     initVisualizer();
     isPlaying = !isPlaying;
 
@@ -244,6 +185,8 @@ function togglePower() {
 }
 
 function changeStation(direction) {
+    if (stations.length === 0) return;
+
     if (direction === 'next') {
         currentStationIndex = (currentStationIndex + 1) % stations.length;
     } else {
@@ -254,6 +197,8 @@ function changeStation(direction) {
     if (isPlaying) playRadio(); 
 }
 
+
+// EVENTOS DE CONTROL DE VOLUMEN
 let volumeTimeout;
 
 volumeContainer.addEventListener('mouseenter', () => {
@@ -290,9 +235,32 @@ volumeSlider.addEventListener('input', (e) => {
     }
 });
 
-toggleBtn.addEventListener('click', togglePower);
-nextBtn.addEventListener('click', () => changeStation('next'));
-prevBtn.addEventListener('click', () => changeStation('prev'));
 
-audioPlayer.volume = volumeSlider.value;
-updateUI('none');
+// ==========================================
+// FUNCIÓN PRINCIPAL PARA CARGAR LAS ESTACIONES
+// ==========================================
+async function loadStations() {
+    try {
+        const response = await fetch('vc.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        stations = await response.json();
+        
+        // Inicializamos los botones solo después de que las estaciones estén listas
+        toggleBtn.addEventListener('click', togglePower);
+        nextBtn.addEventListener('click', () => changeStation('next'));
+        prevBtn.addEventListener('click', () => changeStation('prev'));
+
+        // Preparamos la interfaz visual
+        audioPlayer.volume = volumeSlider.value;
+        updateUI('none');
+
+    } catch (error) {
+        console.error("Error al cargar vc.json:", error);
+        stationNameTop.innerText = "ERROR AL CARGAR LAS RADIOS";
+    }
+}
+
+// Arrancamos el programa
+loadStations();

@@ -1,0 +1,56 @@
+[
+    {
+        "name": "EMOTION 98.3",
+        "url": "https://archive.org/download/gtavc_radiofull/EMOTION.mp3",
+        "duration": 3480,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/e/e7/Emotion_98.3.png/revision/latest/scale-to-width-down/170?cb=20130701212121"
+    },
+    {
+        "name": "Espantoso",
+        "url": "https://archive.org/download/gtavc_radiofull/ESPANT.mp3",
+        "duration": 3180,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/a/a8/Espantoso.png/revision/latest/scale-to-width-down/170?cb=20130524193454"
+    },
+    {
+        "name": "Fever 105",
+        "url": "https://archive.org/download/gtavc_radiofull/FEVER.mp3",
+        "duration": 3600,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/1/14/Fever_105.png/revision/latest/scale-to-width-down/170?cb=20130701202821"
+    },
+    {
+        "name": "FLASH FM",
+        "url": "https://archive.org/download/gtavc_radiofull/FLASH.mp3",
+        "duration": 3300,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/9/90/Flash_FM.png/revision/latest/scale-to-width-down/170?cb=20130701201401"
+    },
+    {
+        "name": "KCHAT",
+        "url": "https://archive.org/download/gtavc_radiofull/KCHAT.mp3",
+        "duration": 3000,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/9/90/KCHAT.png/revision/latest/scale-to-width-down/150?cb=20230514095832"
+    },
+    {
+        "name": "VCPR",
+        "url": "https://archive.org/download/gtavc_radiofull/VCPR.mp3",
+        "duration": 3120,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/7/79/VCPRLogoVC.PNG/revision/latest/scale-to-width-down/150?cb=20150824195147"
+    },
+    {
+        "name": "VROCK",
+        "url": "https://archive.org/download/gtavc_radiofull/VROCK.mp3",
+        "duration": 3540,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/5/56/V-Rock.png/revision/latest/scale-to-width-down/150?cb=20240901223829"
+    },
+    {
+        "name": "WAVE 103",
+        "url": "https://archive.org/download/gtavc_radiofull/WAVE.mp3",
+        "duration": 3240,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/2/24/Wave_103.png/revision/latest/scale-to-width-down/170?cb=20130627225002"
+    },
+    {
+        "name": "Wildstyle",
+        "url": "https://archive.org/download/gtavc_radiofull/WILD.mp3",
+        "duration": 3420,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/d/dd/WildstyleLogo.png/revision/latest/scale-to-width-down/150?cb=20140611115150"
+    }
+]
