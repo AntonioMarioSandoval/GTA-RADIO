@@ -74,39 +74,53 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* ==============================================================
-           OPTIMIZACIÓN EQUILIBRADA PARA MÓVILES EN HORIZONTAL
-           ============================================================== */
+        /* Efecto 103.5 FM */
+        .fm-text-container {
+            filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
+            transition: filter 0.5s ease;
+        }
+        .fm-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            font-style: italic;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--theme-primary, #ffabf3),
+                var(--theme-primary, #ffabf3) 3px,
+                transparent 3px,
+                transparent 5px
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            transition: all 0.5s ease;
+            text-shadow: 0 0 0 transparent;
+        }
+        @media (min-width: 768px) {
+            .fm-text { font-size: 3.5rem; }
+        }
+
+        /* Optimización Landscape Móvil */
         @media (max-height: 500px) and (orientation: landscape) {
-            /* Header */
             .app-header { padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; }
             .app-header > div:first-child { font-size: 1.1rem !important; } 
             .app-header a, .app-header select { padding: 4px 12px !important; font-size: 0.75rem !important; }
             
-            /* Footer */
             .app-footer { padding-top: 4px !important; padding-bottom: 4px !important; border-top-width: 2px !important; }
             .app-footer > button, .app-footer > div { padding: 4px 12px !important; min-width: auto !important; font-size: 0.7rem !important; line-height: 1 !important; }
             .app-footer .material-symbols-outlined { font-size: 1.4rem !important; margin-bottom: 2px !important; }
             
-            /* Contenedor central - AJUSTE CLAVE: Empujamos el bloque hacia arriba */
-            .main-container { 
-                padding-top: 2rem !important;      /* Poco espacio arriba */
-                padding-bottom: 6rem !important;   /* MUCHO espacio abajo para elevar todo el centro */
-                justify-content: center !important; 
-                gap: 8px !important;             
-            }
+            .main-container { padding-top: 2rem !important; padding-bottom: 6rem !important; justify-content: center !important; gap: 8px !important; }
             
-            /* Título de estación */
             .station-header { margin-bottom: 0 !important; margin-top: 0 !important; }
-            .station-title-box { font-size: 0.85rem !important; padding: 4px 16px !important; margin-top: 0 !important; }
+            .fm-text { font-size: 1.4rem !important; }
+            .fm-text-container { filter: drop-shadow(0 0 8px var(--theme-primary, #ffabf3)) !important; }
             
-            /* Carrusel (Ajustado para que encaje perfecto sin empujar hacia abajo) */
             .cover-active { width: 115px !important; height: 115px !important; padding: 4px !important; border-width: 3px !important; }
             .cover-inactive { width: 75px !important; height: 75px !important; padding: 4px !important; border-width: 3px !important; }
             .arrow-icon { font-size: 1.5rem !important; }
             #carousel-container { gap: 1.5rem !important; }
             
-            /* Ecualizador */
             .visualizer-container { margin-top: 0 !important; height: 22px !important; }
         }
     </style>
@@ -134,8 +148,8 @@
     </header>
 
     <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
-        <div class="station-header mb-12 flex flex-col items-center">
-            <div id="station-name-top" class="station-title-box bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider transition-colors duration-500">
+        <div class="station-header mb-8 md:mb-12 flex flex-col items-center fm-text-container">
+            <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3">
                 CARGANDO...
             </div>
         </div>
@@ -191,6 +205,7 @@
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
-    <script src="script.js"></script>
+    <!-- Actualización de ruta del script -->
+    <script src="js/script.js"></script>
 </body>
 </html>

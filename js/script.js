@@ -1,9 +1,15 @@
 let stations = []; 
 
 const audioPlayer = document.getElementById('audio-player');
-audioPlayer.loop = true; // <-- SOLUCIÓN: Obliga al navegador a repetir la estación automáticamente al terminar
-const staticAudio = new Audio('estatica.mp3'); 
+audioPlayer.loop = true; 
+
+// ==========================================
+// AUDIOS GLOBALES UNIFICADOS
+// Rutas actualizadas a la carpeta "audio/"
+// ==========================================
+const staticAudio = new Audio('audio/estatica.mp3'); 
 staticAudio.loop = true; 
+const clickAudio = new Audio('audio/click.mp3'); 
 
 const toggleBtn = document.getElementById('toggle-btn');
 const prevBtn = document.getElementById('prev-btn');
@@ -26,57 +32,67 @@ let analyser;
 let dataArray;
 let isVisualizerInitialized = false;
 
+// ==========================================
+// CONFIGURACIÓN DE TEMA POR JUEGO (SOLO COLOR)
+// ==========================================
 const gameThemes = {
     'vc.json': { 
         primary: '#ffabf3',    
         secondary: '#00fbfb',  
-        bg: '#131313' 
+        bg: '#131313'
     },
     'gta3.json': { 
         primary: '#ffd700',    
         secondary: '#9ca3af',  
-        bg: '#1a1f24' 
+        bg: '#1a1f24'
     },
     'gta4.json': { 
         primary: '#d1d5db',    
         secondary: '#8b8b83',  
-        bg: '#292524' 
+        bg: '#292524'
     }
 };
 
 function applyVisualTheme(jsonFile) {
-    const colors = gameThemes[jsonFile] || gameThemes['vc.json'];
+    const theme = gameThemes[jsonFile] || gameThemes['vc.json'];
+
     let styleTag = document.getElementById('dynamic-theme');
-    
     if (!styleTag) {
         styleTag = document.createElement('style');
         styleTag.id = 'dynamic-theme';
         document.head.appendChild(styleTag);
     }
     
+    // Inyectamos las variables globales CSS para el efecto 103.5 FM y reescribimos los colores
     styleTag.innerHTML = `
-        .text-primary { color: ${colors.primary} !important; }
-        .bg-primary { background-color: ${colors.primary} !important; }
-        .border-primary { border-color: ${colors.primary} !important; }
+        :root {
+            --theme-primary: ${theme.primary};
+            --theme-secondary: ${theme.secondary};
+            --theme-bg: ${theme.bg};
+        }
+    
+        .text-primary { color: var(--theme-primary) !important; }
+        .bg-primary { background-color: var(--theme-primary) !important; }
+        .border-primary { border-color: var(--theme-primary) !important; }
         
-        .text-secondary-container { color: ${colors.secondary} !important; }
-        .border-secondary-container { border-color: ${colors.secondary} !important; }
-        .bg-secondary-container { background-color: ${colors.secondary} !important; }
+        .text-secondary-container { color: var(--theme-secondary) !important; }
+        .border-secondary-container { border-color: var(--theme-secondary) !important; }
+        .bg-secondary-container { background-color: var(--theme-secondary) !important; }
         
-        .glow-neon { box-shadow: 0 0 20px ${colors.primary}, inset 0 0 10px ${colors.primary} !important; }
-        .glow-neon-cyan { box-shadow: 0 0 20px ${colors.secondary}, inset 0 0 10px ${colors.secondary} !important; }
+        .glow-neon { box-shadow: 0 0 20px var(--theme-primary), inset 0 0 10px var(--theme-primary) !important; }
+        .glow-neon-cyan { box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; }
         
-        .header-glow { filter: drop-shadow(0 0 10px ${colors.primary}) !important; }
-        .arrow-glow { filter: drop-shadow(0 0 8px ${colors.primary}) !important; }
+        .header-glow { filter: drop-shadow(0 0 10px var(--theme-primary)) !important; }
+        .arrow-glow { filter: drop-shadow(0 0 8px var(--theme-primary)) !important; }
         
-        .bg-background, body { background-color: ${colors.bg} !important; }
+        .bg-background, body { background-color: var(--theme-bg) !important; }
         
-        input[type=range][orient=vertical] { accent-color: ${colors.secondary} !important; }
+        input[type=range][orient=vertical] { accent-color: var(--theme-secondary) !important; }
     `;
 }
 
 // ==========================================
-// ECUALIZADOR (Alta Resolución)
+// ECUALIZADOR
 // ==========================================
 function initVisualizer() {
     if (isVisualizerInitialized) return;
@@ -106,7 +122,6 @@ function renderFrame() {
     }
 
     analyser.getByteFrequencyData(dataArray);
-
     let step = Math.floor((dataArray.length * 0.7) / visualizerBars.length); 
 
     for (let i = 0; i < visualizerBars.length; i++) {
@@ -124,9 +139,9 @@ function updateUI(direction = 'none') {
     const currentStation = stations[currentStationIndex];
     
     if (isPlaying) {
-        stationNameTop.innerText = "ESTAS ESCUCHANDO: " + currentStation.name;
+        stationNameTop.innerText = currentStation.name;
     } else {
-        stationNameTop.innerText = "APAGADO: " + currentStation.name;
+        stationNameTop.innerText = "OFF: " + currentStation.name;
     }
 
     const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
@@ -241,6 +256,10 @@ function togglePower() {
 function changeStation(direction) {
     if (stations.length === 0) return;
 
+    // Reproducir el sonido global de clic al cambiar de estación
+    clickAudio.currentTime = 0; 
+    clickAudio.play().catch(e => console.log("Sonido bloqueado", e));
+
     if (direction === 'next') {
         currentStationIndex = (currentStationIndex + 1) % stations.length;
     } else {
@@ -287,23 +306,22 @@ volumeSlider.addEventListener('input', (e) => {
     }
 });
 
+// ==========================================
+// GESTIÓN DEL CAMBIO DE JUEGOS
+// ==========================================
 async function loadStations(jsonFile) {
     try {
-        if (isPlaying) {
-            togglePower();
-        }
-
-        stationNameTop.innerText = "SINTONIZANDO...";
-
         applyVisualTheme(jsonFile);
 
-        const response = await fetch(jsonFile);
+        // Actualizamos la ruta para buscar en la carpeta "data/"
+        const response = await fetch('data/' + jsonFile);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         stations = await response.json();
         
         currentStationIndex = 0;
+        
         updateUI('none');
 
     } catch (error) {
