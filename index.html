@@ -60,7 +60,6 @@
             accent-color: #00fbfb;
         }
 
-        /* ANIMACIONES DE RULETA */
         .slide-next { animation: rouletteNext 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         .slide-prev { animation: roulettePrev 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         
@@ -71,6 +70,15 @@
         @keyframes roulettePrev { 
             0% { transform: translateX(-80px); opacity: 0; } 
             100% { transform: translateX(0); opacity: 1; } 
+        }
+        
+        @media (max-height: 500px) and (orientation: landscape) {
+            .main-container { padding-top: 4.5rem !important; padding-bottom: 4.5rem !important; }
+            .station-header { margin-bottom: 0.5rem !important; }
+            .visualizer-container { margin-top: 0.5rem !important; height: 1.5rem !important; }
+            .cover-active { width: 140px !important; height: 140px !important; padding: 0.5rem !important; }
+            .cover-inactive { width: 100px !important; height: 100px !important; padding: 0.5rem !important; }
+            .arrow-icon { font-size: 1.5rem !important; }
         }
     </style>
 </head>
@@ -92,9 +100,9 @@
         </nav>
     </header>
 
-    <main class="flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
+    <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
         
-        <div class="mb-12 flex flex-col items-center">
+        <div class="station-header mb-12 flex flex-col items-center">
             <div id="station-name-top" class="bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider">
                 Estas Escuchando: 
             </div>
@@ -113,7 +121,7 @@
             </button>
         </div>
 
-        <div class="mt-16 flex items-end justify-center gap-2 h-16 w-full max-w-lg px-8">
+        <div class="visualizer-container mt-16 flex items-end justify-center gap-2 h-16 w-full max-w-lg px-8">
             <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
             <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
             <div class="visualizer-bar w-8 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
@@ -128,10 +136,13 @@
             POWER
         </button>
 
-        <div class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] relative group cursor-pointer">
+        <!-- Contenedor del Botón de Volumen con ID para controlarlo por JS -->
+        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-3 min-w-[80px] shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none">
             <span class="material-symbols-outlined mb-1">volume_up</span>
             VOLUME
-            <div class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden group-hover:flex flex-col justify-start p-1 shadow-[4px_4px_0px_#000000]">
+            
+            <!-- Quitamos 'group-hover' y agregamos un ID 'volume-popup' para gestionarlo con JavaScript -->
+            <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50">
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
             </div>
         </div>

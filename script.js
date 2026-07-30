@@ -67,6 +67,10 @@ const volumeSlider = document.getElementById('volume-slider');
 const carouselContainer = document.getElementById('carousel-container');
 const visualizerBars = document.querySelectorAll('.visualizer-bar');
 
+// Referencias para el control inteligente del volumen
+const volumeContainer = document.getElementById('volume-container');
+const volumePopup = document.getElementById('volume-popup');
+
 let currentStationIndex = 0;
 let isPlaying = false;
 let radioTimeout; 
@@ -131,9 +135,9 @@ function updateUI(direction = 'none') {
     if (isPlaying) {
         centralStationHTML = `
         <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
-            <div class="absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)]">▶</div>
-            <div class="absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)]">◀</div>
-            <div class="w-52 h-52 md:w-80 md:h-80 border-4 border-primary bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] glow-neon transition-colors duration-300">
+            <div class="arrow-icon absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)] z-20">▶</div>
+            <div class="arrow-icon absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)] z-20">◀</div>
+            <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-primary bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] glow-neon transition-colors duration-300">
                 <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
         </div>
@@ -141,7 +145,7 @@ function updateUI(direction = 'none') {
     } else {
         centralStationHTML = `
         <div class="scale-100 md:scale-110 z-10 relative opacity-60 filter grayscale transition-all duration-300">
-            <div class="w-52 h-52 md:w-80 md:h-80 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
+            <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
                 <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-70">
             </div>
         </div>
@@ -150,7 +154,7 @@ function updateUI(direction = 'none') {
 
     carouselContainer.innerHTML = `
         <div class="opacity-40 scale-75 filter grayscale">
-            <div class="w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
+            <div class="cover-inactive w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
                 <img src="${stations[prevIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
         </div>
@@ -158,14 +162,14 @@ function updateUI(direction = 'none') {
         ${centralStationHTML}
 
         <div class="opacity-40 scale-75 filter grayscale">
-            <div class="w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
+            <div class="cover-inactive w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
                 <img src="${stations[nextIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
         </div>
     `;
 
     carouselContainer.classList.remove('slide-next', 'slide-prev');
-    void carouselContainer.offsetWidth; // Forzar reinicio de animación
+    void carouselContainer.offsetWidth; 
     
     if (direction === 'next') {
         carouselContainer.classList.add('slide-next');
@@ -237,6 +241,40 @@ function changeStation(direction) {
     updateUI(direction); 
     if (isPlaying) playRadio(); 
 }
+
+// ==========================================
+// CONTROL ESTABLE DEL MENÚ DE VOLUMEN (Sin parpadeos)
+// ==========================================
+let volumeTimeout;
+
+// Mostrar al pasar el mouse o hacer clic
+volumeContainer.addEventListener('mouseenter', () => {
+    clearTimeout(volumeTimeout);
+    volumePopup.classList.remove('hidden');
+    volumePopup.classList.add('flex');
+});
+
+// Ocultar al retirar el mouse con un pequeño respiro (delay de 300ms)
+volumeContainer.addEventListener('mouseleave', () => {
+    volumeTimeout = setTimeout(() => {
+        volumePopup.classList.remove('flex');
+        volumePopup.classList.add('hidden');
+    }, 300);
+});
+
+// También permitimos alternar con un clic para dispositivos táctiles o comodidad
+volumeContainer.addEventListener('click', (e) => {
+    // Evitamos que se cierre si interactúan directo con el slider
+    if (e.target === volumeSlider) return;
+    
+    if (volumePopup.classList.contains('hidden')) {
+        volumePopup.classList.remove('hidden');
+        volumePopup.classList.add('flex');
+    } else {
+        volumePopup.classList.remove('flex');
+        volumePopup.classList.add('hidden');
+    }
+});
 
 volumeSlider.addEventListener('input', (e) => {
     const vol = parseFloat(e.target.value);
