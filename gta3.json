@@ -1,0 +1,56 @@
+[
+    {
+        "name": "Head Radio",
+        "url": "https://archive.org/download/gta3fullradio/HEAD.mp3",
+        "duration": 1406,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/6/69/Head.jpg/revision/latest?cb=20071230184102"
+    },
+    {
+        "name": "Double Cleff FM",
+        "url": "https://archive.org/download/gta3fullradio/CLASS.mp3",
+        "duration": 1236,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/d/db/Doublecleff.png/revision/latest/scale-to-width-down/150?cb=20140718121527"
+    },
+    {
+        "name": "K-Jah Radio",
+        "url": "https://archive.org/download/gta3fullradio/KJAH.mp3",
+        "duration": 1144,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/1/14/K-Jah_Radio.PNG/revision/latest/scale-to-width-down/150?cb=20111128142603"
+    },
+    {
+        "name": "Rise FM",
+        "url": "https://archive.org/download/gta3fullradio/RISE.mp3",
+        "duration": 1568,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/b/b8/RiseFM_2001_Logo_GTA-III.png/revision/latest/scale-to-width-down/150?cb=20240116134440"
+    },
+    {
+        "name": "Lips 106",
+        "url": "https://archive.org/download/gta3fullradio/LIPS.mp3",
+        "duration": 1207,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/5/51/Lips_106_Logo.png/revision/latest/scale-to-width-down/150?cb=20130615150226"
+    },
+    {
+        "name": "Game Radio FM",
+        "url": "https://archive.org/download/gta3fullradio/GAME.mp3",
+        "duration": 944,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/3/3d/Game_Radio_FM_%28logo%29.png/revision/latest/scale-to-width-down/150?cb=20130615145342"
+    },
+    {
+        "name": "MSX FM",
+        "url": "https://archive.org/download/gta3fullradio/MSX.mp3",
+        "duration": 1500,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/d/d3/MSX_FM_logo.png/revision/latest/scale-to-width-down/150?cb=20130615145822"
+    },
+    {
+        "name": "Flashback FM",
+        "url": "https://archive.org/download/gta3fullradio/FLASH.mp3",
+        "duration": 1126,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/a/a6/FlashbackFMLogo.png/revision/latest/scale-to-width-down/148?cb=20131220134212"
+    },
+    {
+        "name": "Chatterbox",
+        "url": "https://archive.org/download/gta3fullradio/CHAT.mp3",
+        "duration": 3484,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/e/e3/Chatterbox_GTA_3.jpg/revision/latest?cb=20090315213147"
+    }
+]

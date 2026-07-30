@@ -1,4 +1,4 @@
-let stations = []; // La lista ahora arranca vacía y se llena leyendo el JSON
+let stations = []; 
 
 const audioPlayer = document.getElementById('audio-player');
 const staticAudio = new Audio('estatica.mp3'); 
@@ -11,6 +11,7 @@ const stationNameTop = document.getElementById('station-name-top');
 const volumeSlider = document.getElementById('volume-slider');
 const carouselContainer = document.getElementById('carousel-container');
 const visualizerBars = document.querySelectorAll('.visualizer-bar');
+const themeSelector = document.getElementById('theme-selector');
 
 const volumeContainer = document.getElementById('volume-container');
 const volumePopup = document.getElementById('volume-popup');
@@ -24,6 +25,58 @@ let analyser;
 let dataArray;
 let isVisualizerInitialized = false;
 
+const gameThemes = {
+    'vc.json': { 
+        primary: '#ffabf3',    
+        secondary: '#00fbfb',  
+        bg: '#131313' 
+    },
+    'gta3.json': { 
+        primary: '#ffd700',    
+        secondary: '#9ca3af',  
+        bg: '#1a1f24' 
+    },
+    'gta4.json': { 
+        primary: '#d1d5db',    
+        secondary: '#8b8b83',  
+        bg: '#292524' 
+    }
+};
+
+function applyVisualTheme(jsonFile) {
+    const colors = gameThemes[jsonFile] || gameThemes['vc.json'];
+    let styleTag = document.getElementById('dynamic-theme');
+    
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'dynamic-theme';
+        document.head.appendChild(styleTag);
+    }
+    
+    styleTag.innerHTML = `
+        .text-primary { color: ${colors.primary} !important; }
+        .bg-primary { background-color: ${colors.primary} !important; }
+        .border-primary { border-color: ${colors.primary} !important; }
+        
+        .text-secondary-container { color: ${colors.secondary} !important; }
+        .border-secondary-container { border-color: ${colors.secondary} !important; }
+        .bg-secondary-container { background-color: ${colors.secondary} !important; }
+        
+        .glow-neon { box-shadow: 0 0 20px ${colors.primary}, inset 0 0 10px ${colors.primary} !important; }
+        .glow-neon-cyan { box-shadow: 0 0 20px ${colors.secondary}, inset 0 0 10px ${colors.secondary} !important; }
+        
+        .header-glow { filter: drop-shadow(0 0 10px ${colors.primary}) !important; }
+        .arrow-glow { filter: drop-shadow(0 0 8px ${colors.primary}) !important; }
+        
+        .bg-background, body { background-color: ${colors.bg} !important; }
+        
+        input[type=range][orient=vertical] { accent-color: ${colors.secondary} !important; }
+    `;
+}
+
+// ==========================================
+// ECUALIZADOR (Alta Resolución)
+// ==========================================
 function initVisualizer() {
     if (isVisualizerInitialized) return;
     
@@ -35,7 +88,8 @@ function initVisualizer() {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     
-    analyser.fftSize = 64; 
+    // Aumentamos de 64 a 128 para capturar más detalles de la música
+    analyser.fftSize = 128; 
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
     
@@ -53,8 +107,12 @@ function renderFrame() {
 
     analyser.getByteFrequencyData(dataArray);
 
+    // Repartimos las frecuencias bajas y medias entre nuestras 17 barras
+    // dataArray.length es 64. Usamos un paso que distribuya esto dinámicamente.
+    let step = Math.floor((dataArray.length * 0.7) / visualizerBars.length); 
+
     for (let i = 0; i < visualizerBars.length; i++) {
-        let value = dataArray[i * 4]; 
+        let value = dataArray[i * step]; 
         let percent = (value / 255) * 100;
         if (percent < 10) percent = 10; 
         
@@ -63,7 +121,6 @@ function renderFrame() {
 }
 
 function updateUI(direction = 'none') {
-    // Protección de seguridad por si tarda en cargar el JSON
     if (stations.length === 0) return; 
 
     const currentStation = stations[currentStationIndex];
@@ -82,8 +139,8 @@ function updateUI(direction = 'none') {
     if (isPlaying) {
         centralStationHTML = `
         <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
-            <div class="arrow-icon absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)] z-20">▶</div>
-            <div class="arrow-icon absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(255,171,243,1)] z-20">◀</div>
+            <div class="arrow-glow absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">▶</div>
+            <div class="arrow-glow absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">◀</div>
             <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-primary bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] glow-neon transition-colors duration-300">
                 <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
@@ -125,7 +182,6 @@ function updateUI(direction = 'none') {
     }
 }
 
-// === EVENTO: LA CANCIÓN ESTÁ LISTA PARA SONAR ===
 audioPlayer.addEventListener('playing', () => {
     staticAudio.volume = 0; 
     audioPlayer.volume = volumeSlider.value;
@@ -161,7 +217,7 @@ function playRadio() {
 }
 
 function togglePower() {
-    if (stations.length === 0) return; // Si no cargó el JSON, no hace nada
+    if (stations.length === 0) return; 
 
     initVisualizer();
     isPlaying = !isPlaying;
@@ -197,8 +253,6 @@ function changeStation(direction) {
     if (isPlaying) playRadio(); 
 }
 
-
-// EVENTOS DE CONTROL DE VOLUMEN
 let volumeTimeout;
 
 volumeContainer.addEventListener('mouseenter', () => {
@@ -235,32 +289,38 @@ volumeSlider.addEventListener('input', (e) => {
     }
 });
 
-
-// ==========================================
-// FUNCIÓN PRINCIPAL PARA CARGAR LAS ESTACIONES
-// ==========================================
-async function loadStations() {
+async function loadStations(jsonFile) {
     try {
-        const response = await fetch('vc.json');
+        if (isPlaying) {
+            togglePower();
+        }
+
+        stationNameTop.innerText = "SINTONIZANDO...";
+
+        applyVisualTheme(jsonFile);
+
+        const response = await fetch(jsonFile);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         stations = await response.json();
         
-        // Inicializamos los botones solo después de que las estaciones estén listas
-        toggleBtn.addEventListener('click', togglePower);
-        nextBtn.addEventListener('click', () => changeStation('next'));
-        prevBtn.addEventListener('click', () => changeStation('prev'));
-
-        // Preparamos la interfaz visual
-        audioPlayer.volume = volumeSlider.value;
+        currentStationIndex = 0;
         updateUI('none');
 
     } catch (error) {
-        console.error("Error al cargar vc.json:", error);
-        stationNameTop.innerText = "ERROR AL CARGAR LAS RADIOS";
+        console.error(`Error al cargar ${jsonFile}:`, error);
+        stationNameTop.innerText = "ERROR DE SEÑAL";
     }
 }
 
-// Arrancamos el programa
-loadStations();
+themeSelector.addEventListener('change', (e) => {
+    loadStations(e.target.value);
+});
+
+toggleBtn.addEventListener('click', togglePower);
+nextBtn.addEventListener('click', () => changeStation('next'));
+prevBtn.addEventListener('click', () => changeStation('prev'));
+audioPlayer.volume = volumeSlider.value;
+
+loadStations(themeSelector.value);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>GTA VC Radio</title>
+    <title>GTA Radio Player</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -71,74 +71,53 @@
             0% { transform: translateX(-80px); opacity: 0; } 
             100% { transform: translateX(0); opacity: 1; } 
         }
+
+        select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* ==============================================================
-           OPTIMIZACIÓN EXTREMA PARA MÓVILES EN HORIZONTAL (LANDSCAPE)
-           ============================================================== */
         @media (max-height: 500px) and (orientation: landscape) {
-            /* Header ultrafino */
             .app-header { padding-top: 2px !important; padding-bottom: 2px !important; border-bottom-width: 2px !important; }
-            .app-header > div:first-child { font-size: 1.1rem !important; } /* Título más chico */
-            .app-header a { padding: 2px 8px !important; font-size: 0.6rem !important; }
-
-            /* Footer ultrafino */
+            .app-header > div:first-child { font-size: 1.1rem !important; } 
+            .app-header a, .app-header select { padding: 2px 8px !important; font-size: 0.6rem !important; }
             .app-footer { padding-top: 2px !important; padding-bottom: 2px !important; border-top-width: 2px !important; }
-            .app-footer > button, .app-footer > div {
-                padding: 2px 10px !important;
-                min-width: auto !important;
-                font-size: 0.6rem !important;
-                line-height: 1 !important;
-            }
+            .app-footer > button, .app-footer > div { padding: 2px 10px !important; min-width: auto !important; font-size: 0.6rem !important; line-height: 1 !important; }
             .app-footer .material-symbols-outlined { font-size: 1.2rem !important; margin-bottom: 0 !important; }
-
-            /* Contenedor central (Espacio liberado) */
-            .main-container { 
-                padding-top: 2rem !important; 
-                padding-bottom: 2.2rem !important; 
-                justify-content: center !important; 
-                gap: 5px !important; /* Juntar los elementos verticalmente */
-            }
-            
-            /* Título de estación compacto */
+            .main-container { padding-top: 2rem !important; padding-bottom: 2.2rem !important; justify-content: center !important; gap: 5px !important; }
             .station-header { margin-bottom: 0 !important; }
             .station-title-box { font-size: 0.75rem !important; padding: 2px 10px !important; margin-top: 0 !important; }
-            
-            /* Carrusel reducido */
             .cover-active { width: 90px !important; height: 90px !important; padding: 2px !important; border-width: 2px !important; }
             .cover-inactive { width: 65px !important; height: 65px !important; padding: 2px !important; border-width: 2px !important; }
             .arrow-icon { font-size: 1rem !important; }
             #carousel-container { gap: 1rem !important; }
-
-            /* Ecualizador visible */
             .visualizer-container { margin-top: 5px !important; height: 18px !important; }
         }
     </style>
 </head>
-<body class="bg-background text-on-background tv-static min-h-screen overflow-hidden flex flex-col font-label-md">
+<body class="bg-background text-on-background tv-static min-h-screen overflow-hidden flex flex-col font-label-md transition-colors duration-500">
     <div class="scanlines"></div>
 
-    <!-- Header -->
-    <header class="app-header flex fixed top-0 left-0 w-full z-50 justify-between items-center px-3 md:px-8 py-3 md:py-4 bg-background border-b-4 border-primary drop-shadow-[0_0_10px_rgba(255,171,243,0.8)]">
-        <div class="font-headline-md text-base md:text-3xl text-primary italic tracking-tighter -skew-x-3">
-            GTA RADIO (VICE CITY VERSION)
+    <header class="app-header header-glow flex fixed top-0 left-0 w-full z-50 justify-between items-center px-3 md:px-8 py-3 md:py-4 bg-background border-b-4 border-primary transition-colors duration-500">
+        <div id="main-title" class="font-headline-md text-base md:text-3xl text-primary italic tracking-tighter -skew-x-3 transition-colors duration-500">
+            GTA RADIO
         </div>
         
-        <nav class="flex gap-2 md:gap-4">
-            <a class="text-on-primary bg-primary border-2 border-black -skew-x-3 px-2 md:px-4 py-0.5 md:py-1 flex items-center gap-1 md:gap-2 text-[10px] md:text-base" href="#">
-                <span class="inline-block w-1.5 h-1.5 md:w-2 md:h-2 bg-black blink"></span> Estaciones
-            </a>
-            <a class="hidden sm:block text-primary border-2 border-primary -skew-x-3 px-2 md:px-4 py-1 hover:bg-primary hover:text-black transition-colors text-xs md:text-base" href="#">
-                ...
-            </a>
+        <nav class="flex gap-2 md:gap-4 items-center">
+            <div class="relative -skew-x-3">
+                <select id="theme-selector" class="bg-background text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none hover:bg-primary hover:text-black transition-colors uppercase">
+                    <option value="vc.json">Vice City</option>
+                    <option value="gta3.json">GTA III</option>
+                    <option value="gta4.json">GTA IV</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
+                    <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
+                </div>
+            </div>
         </nav>
     </header>
 
-    <!-- Main -->
     <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
-        
         <div class="station-header mb-12 flex flex-col items-center">
-            <div id="station-name-top" class="station-title-box bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider">
-                Estas Escuchando: 
+            <div id="station-name-top" class="station-title-box bg-surface-variant px-4 py-2 border-2 border-secondary-container text-secondary-container mt-2 -skew-x-3 shadow-[4px_4px_0px_#000000] uppercase font-headline-md text-xl md:text-2xl tracking-wider transition-colors duration-500">
+                CARGANDO...
             </div>
         </div>
 
@@ -155,23 +134,35 @@
             </button>
         </div>
 
-        <div class="visualizer-container mt-16 flex items-end justify-center gap-2 h-16 w-full max-w-lg px-8">
-            <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-8 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-8 bg-secondary-container h-[10%] transition-all duration-75"></div>
+        <!-- 17 barras más delgadas para mejor resolución de sonido -->
+        <div class="visualizer-container mt-16 flex items-end justify-center gap-1 h-16 w-full max-w-lg px-8">
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
         </div>
     </main>
 
-    <!-- Footer -->
     <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
         <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-colors">
             <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">power_settings_new</span>
             <span>POWER</span>
         </button>
 
-        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none">
+        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none transition-colors">
             <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">volume_up</span>
             <span>VOLUME</span>
             
