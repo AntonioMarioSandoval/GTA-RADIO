@@ -1,6 +1,7 @@
 let stations = []; 
 
 const audioPlayer = document.getElementById('audio-player');
+audioPlayer.loop = true; // <-- SOLUCIÓN: Obliga al navegador a repetir la estación automáticamente al terminar
 const staticAudio = new Audio('estatica.mp3'); 
 staticAudio.loop = true; 
 
@@ -88,7 +89,6 @@ function initVisualizer() {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     
-    // Aumentamos de 64 a 128 para capturar más detalles de la música
     analyser.fftSize = 128; 
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
@@ -107,8 +107,6 @@ function renderFrame() {
 
     analyser.getByteFrequencyData(dataArray);
 
-    // Repartimos las frecuencias bajas y medias entre nuestras 17 barras
-    // dataArray.length es 64. Usamos un paso que distribuya esto dinámicamente.
     let step = Math.floor((dataArray.length * 0.7) / visualizerBars.length); 
 
     for (let i = 0; i < visualizerBars.length; i++) {
