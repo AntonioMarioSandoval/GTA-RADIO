@@ -1,9 +1,9 @@
 [
     {
-        "name": "EMOTION 98.3",
-        "url": "https://archive.org/download/gtavc_radiofull/EMOTION.mp3",
-        "duration": 3547,
-        "logo": "https://static.wikia.nocookie.net/esgta/images/e/e7/Emotion_98.3.png/revision/latest/scale-to-width-down/170?cb=20130701212121"
+        "name": "VROCK",
+        "url": "https://archive.org/download/gtavc_radiofull/VROCK.mp3",
+        "duration": 4644,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/5/56/V-Rock.png/revision/latest/scale-to-width-down/150?cb=20240901223829"
     },
     {
         "name": "Espantoso",
@@ -35,11 +35,11 @@
         "duration": 5184,
         "logo": "https://static.wikia.nocookie.net/esgta/images/7/79/VCPRLogoVC.PNG/revision/latest/scale-to-width-down/150?cb=20150824195147"
     },
-    {
-        "name": "VROCK",
-        "url": "https://archive.org/download/gtavc_radiofull/VROCK.mp3",
-        "duration": 4644,
-        "logo": "https://static.wikia.nocookie.net/esgta/images/5/56/V-Rock.png/revision/latest/scale-to-width-down/150?cb=20240901223829"
+{
+        "name": "EMOTION 98.3",
+        "url": "https://archive.org/download/gtavc_radiofull/EMOTION.mp3",
+        "duration": 3547,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/e/e7/Emotion_98.3.png/revision/latest/scale-to-width-down/170?cb=20130701212121"
     },
     {
         "name": "WAVE 103",
