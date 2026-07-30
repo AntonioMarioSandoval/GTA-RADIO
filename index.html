@@ -74,7 +74,7 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* Efecto 103.5 FM (Líneas ajustadas para mejor legibilidad) */
+        /* Efecto de texto principal (Sólido y Centrado) */
         .fm-text-container {
             filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
             transition: filter 0.5s ease;
@@ -83,19 +83,9 @@
             font-size: 1.5rem;
             font-weight: 900;
             font-style: italic;
-            /* Líneas de color más gruesas (6px) con separaciones pequeñas transparentes (2px) */
-            background: repeating-linear-gradient(
-                to bottom,
-                var(--theme-primary, #ffabf3),
-                var(--theme-primary, #ffabf3) 6px,
-                transparent 6px,
-                transparent 8px
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            transition: all 0.5s ease;
-            text-shadow: 0 0 0 transparent;
+            color: var(--theme-primary, #ffabf3); /* Color sólido en lugar de gradiente con líneas */
+            transition: color 0.5s ease;
+            text-align: center; /* Centrado forzado para cuando se divide en dos líneas */
         }
         @media (min-width: 768px) {
             .fm-text { font-size: 2.5rem; }
@@ -111,7 +101,6 @@
             .app-footer > button, .app-footer > div { padding: 4px 12px !important; min-width: auto !important; font-size: 0.7rem !important; line-height: 1 !important; }
             .app-footer .material-symbols-outlined { font-size: 1.4rem !important; margin-bottom: 2px !important; }
             
-            /* Subimos el contenido aún más reduciendo el padding superior a 0.5rem */
             .main-container { padding-top: 0.5rem !important; padding-bottom: 7rem !important; justify-content: center !important; gap: 8px !important; }
             
             .station-header { margin-bottom: 0 !important; margin-top: 0 !important; }
@@ -150,8 +139,9 @@
     </header>
 
     <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
-        <div class="station-header mb-8 md:mb-12 flex flex-col items-center fm-text-container">
-            <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3">
+        <!-- Agregamos text-center aquí para asegurar el centrado -->
+        <div class="station-header mb-8 md:mb-12 flex flex-col items-center fm-text-container text-center px-4">
+            <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3 text-center">
                 CARGANDO...
             </div>
         </div>
