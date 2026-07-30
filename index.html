@@ -74,7 +74,7 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* Efecto de texto principal (Sólido y Centrado) */
+        /* Efecto de texto principal (Solido y Centrado) */
         .fm-text-container {
             filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
             transition: filter 0.5s ease;
@@ -91,7 +91,7 @@
             .fm-text { font-size: 2.5rem; }
         }
 
-        /* Optimización Landscape Móvil */
+        /* Se realizo optimizacion Landscape Movil */
         @media (max-height: 500px) and (orientation: landscape) {
             .app-header { padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; }
             .app-header > div:first-child { font-size: 1.1rem !important; } 
@@ -127,12 +127,15 @@
         <nav class="flex gap-2 md:gap-4 items-center">
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="bg-background text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none hover:bg-primary hover:text-black transition-colors uppercase">
-                    <option value="vc.json">Vice City</option>
+                    <option value="vc.json">GTA Vice City</option>
                     <option value="gta3.json">GTA III</option>
+                    <!-- <option value="gtalcs.json">GTA Liberty City Stories</option> -->
+                    <!-- <option value="gtavcs.json">GTA Vice City Stories</option> -->
+                    <!-- <option value="gtasa.json">GTA San Andreas</option> -->
                     <!-- <option value="gta4.json">GTA IV</option> -->
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
-                    <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
+                    <span class="material-symbols-outlined text-[12px] md:text-base"></span>
                 </div>
             </div>
         </nav>
@@ -147,14 +150,14 @@
 
         <div class="w-full relative overflow-hidden flex items-center justify-center">
             <button id="prev-btn" class="absolute left-2 md:left-8 z-20 text-primary hover:text-white transition-colors p-2">
-                <span class="material-symbols-outlined text-5xl md:text-6xl drop-shadow-md">chevron_left</span>
+                <span class="material-symbols-outlined text-5xl md:text-6xl drop-shadow-md"></span>
             </button>
             
             <div id="carousel-container" class="w-full flex justify-center items-center gap-4 md:gap-16 px-12 md:px-24">
             </div>
 
             <button id="next-btn" class="absolute right-2 md:right-8 z-20 text-primary hover:text-white transition-colors p-2">
-                <span class="material-symbols-outlined text-5xl md:text-6xl drop-shadow-md">chevron_right</span>
+                <span class="material-symbols-outlined text-5xl md:text-6xl drop-shadow-md"></span>
             </button>
         </div>
 
@@ -181,12 +184,12 @@
 
     <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
         <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-colors">
-            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">power_settings_new</span>
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl"></span>
             <span>POWER</span>
         </button>
 
         <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none transition-colors">
-            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">volume_up</span>
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl"></span>
             <span>VOLUME</span>
             
             <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50">
