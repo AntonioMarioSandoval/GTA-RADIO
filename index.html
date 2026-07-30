@@ -74,21 +74,35 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
+        /* ==============================================================
+           OPTIMIZACIÓN EQUILIBRADA PARA MÓVILES EN HORIZONTAL
+           ============================================================== */
         @media (max-height: 500px) and (orientation: landscape) {
-            .app-header { padding-top: 2px !important; padding-bottom: 2px !important; border-bottom-width: 2px !important; }
-            .app-header > div:first-child { font-size: 1.1rem !important; } 
-            .app-header a, .app-header select { padding: 2px 8px !important; font-size: 0.6rem !important; }
-            .app-footer { padding-top: 2px !important; padding-bottom: 2px !important; border-top-width: 2px !important; }
-            .app-footer > button, .app-footer > div { padding: 2px 10px !important; min-width: auto !important; font-size: 0.6rem !important; line-height: 1 !important; }
-            .app-footer .material-symbols-outlined { font-size: 1.2rem !important; margin-bottom: 0 !important; }
-            .main-container { padding-top: 2rem !important; padding-bottom: 2.2rem !important; justify-content: center !important; gap: 5px !important; }
+            /* Header */
+            .app-header { padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; }
+            .app-header > div:first-child { font-size: 1.2rem !important; } 
+            .app-header a, .app-header select { padding: 4px 12px !important; font-size: 0.75rem !important; }
+            
+            /* Footer */
+            .app-footer { padding-top: 4px !important; padding-bottom: 4px !important; border-top-width: 2px !important; }
+            .app-footer > button, .app-footer > div { padding: 4px 12px !important; min-width: auto !important; font-size: 0.7rem !important; line-height: 1 !important; }
+            .app-footer .material-symbols-outlined { font-size: 1.5rem !important; margin-bottom: 2px !important; }
+            
+            /* Contenedor central (Distribución mejorada) */
+            .main-container { padding-top: 3.5rem !important; padding-bottom: 3.5rem !important; justify-content: center !important; gap: 15px !important; }
+            
+            /* Título de estación */
             .station-header { margin-bottom: 0 !important; }
-            .station-title-box { font-size: 0.75rem !important; padding: 2px 10px !important; margin-top: 0 !important; }
-            .cover-active { width: 90px !important; height: 90px !important; padding: 2px !important; border-width: 2px !important; }
-            .cover-inactive { width: 65px !important; height: 65px !important; padding: 2px !important; border-width: 2px !important; }
-            .arrow-icon { font-size: 1rem !important; }
-            #carousel-container { gap: 1rem !important; }
-            .visualizer-container { margin-top: 5px !important; height: 18px !important; }
+            .station-title-box { font-size: 0.9rem !important; padding: 4px 16px !important; margin-top: 0 !important; }
+            
+            /* Carrusel más grande y visible */
+            .cover-active { width: 140px !important; height: 140px !important; padding: 4px !important; border-width: 3px !important; }
+            .cover-inactive { width: 95px !important; height: 95px !important; padding: 4px !important; border-width: 3px !important; }
+            .arrow-icon { font-size: 1.5rem !important; }
+            #carousel-container { gap: 1.5rem !important; }
+            
+            /* Ecualizador más notorio */
+            .visualizer-container { margin-top: 0 !important; height: 25px !important; }
         }
     </style>
 </head>
@@ -134,7 +148,6 @@
             </button>
         </div>
 
-        <!-- 17 barras más delgadas para mejor resolución de sonido -->
         <div class="visualizer-container mt-16 flex items-end justify-center gap-1 h-16 w-full max-w-lg px-8">
             <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
             <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
