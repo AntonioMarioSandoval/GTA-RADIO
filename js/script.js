@@ -44,6 +44,16 @@ const gameThemes = {
         secondary: '#9ca3af',  
         bg: '#1a1f24'
     },
+    'gtasa.json': {
+        primary: '#c5cee9',    
+        secondary: '#ffffff',  
+        bg: '#010000'          
+    },
+    'vcs.json': {
+        primary: '#14f0d8',    
+        secondary: '#f9fa99',  
+        bg: '#320049'          
+    },
     'gta4.json': { 
         primary: '#d1d5db',    
         secondary: '#8b8b83',  
@@ -86,6 +96,11 @@ function applyVisualTheme(jsonFile) {
         
         input[type=range][orient=vertical] { accent-color: var(--theme-secondary) !important; }
     `;
+    
+    // Forzamos el cambio de color del footer inmediatamente si la radio está apagada
+    if (!isPlaying) {
+        toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
+    }
 }
 
 // ==========================================
@@ -131,12 +146,27 @@ function renderFrame() {
 }
 
 function updateUI(direction = 'none') {
-    if (stations.length === 0) return; 
-
-    const currentStation = stations[currentStationIndex];
     const fmTextContainer = document.querySelector('.fm-text-container');
+
+    // === MANEJO DE ESTADO VACÍO (SIN ESTACIONES CARGADAS) ===
+    if (stations.length === 0) {
+        stationNameTop.classList.add('tuning-mode');
+        fmTextContainer.classList.add('tuning-mode');
+        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">NO SE ENCONTRARON</span> <span class="block md:inline mobile-break">ESTACIONES</span>`;
+        
+        carouselContainer.innerHTML = `
+            <div class="scale-100 md:scale-110 z-10 relative opacity-60 filter grayscale transition-all duration-300">
+                <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-gray-500 bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
+                    <span class="text-gray-400 font-headline-md text-xl md:text-2xl text-center">PRÓXIMAMENTE</span>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // === MANEJO NORMAL (CON ESTACIONES) ===
+    const currentStation = stations[currentStationIndex];
     
-    // El texto ahora usa Spans interactivos. En PC es 1 línea, en celular son 2 líneas.
     if (isPlaying && isTuning) {
         stationNameTop.classList.add('tuning-mode');
         fmTextContainer.classList.add('tuning-mode');
@@ -268,7 +298,7 @@ function togglePower() {
         playRadio();
     } else {
         isTuning = false;
-        toggleBtn.className = "flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-secondary hover:text-black transition-colors";
+        toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
         clearTimeout(radioTimeout);
         audioPlayer.pause();
         audioPlayer.src = ""; 
@@ -333,16 +363,29 @@ volumeSlider.addEventListener('input', (e) => {
     }
 });
 
+// ==========================================
+// GESTIÓN DEL CAMBIO DE JUEGOS Y ARCHIVOS FALTANTES
+// ==========================================
 async function loadStations(jsonFile) {
     try {
         applyVisualTheme(jsonFile);
 
         const response = await fetch('data/' + jsonFile);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        stations = await response.json();
         
+        // Si el archivo no existe o falla la lectura (Ej: Error 404), lanzamos error para vaciar el array
+        if (!response.ok) {
+            throw new Error(`Archivo no existe o falla en red.`);
+        }
+        
+        const fetchedData = await response.json();
+        
+        // Si el archivo existe pero el arreglo JSON está vacío []
+        if (fetchedData.length === 0) {
+            throw new Error(`El archivo JSON está vacío.`);
+        }
+
+        // Carga exitosa y normal si hay estaciones
+        stations = fetchedData;
         currentStationIndex = 0;
         
         if (isPlaying) {
@@ -354,8 +397,21 @@ async function loadStations(jsonFile) {
         }
 
     } catch (error) {
-        console.error(`Error al cargar ${jsonFile}:`, error);
-        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">ERROR DE SEÑAL</span> <span class="block md:inline mobile-break">VERIFIQUE LA CONEXIÓN</span>`;
+        console.warn(`Aviso: ${jsonFile} no tiene estaciones cargadas o no existe aún.`);
+        
+        // Si la radio estaba sonando, la apagamos limpiamente
+        if (isPlaying) {
+            isPlaying = false;
+            toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
+            clearTimeout(radioTimeout);
+            audioPlayer.pause();
+            audioPlayer.src = ""; 
+            staticAudio.pause();
+        }
+        
+        // Vaciamos el array y forzamos la actualización de UI para mostrar el mensaje de "NO SE ENCONTRARON"
+        stations = [];
+        updateUI('none');
     }
 }
 

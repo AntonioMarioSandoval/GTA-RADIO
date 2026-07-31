@@ -89,10 +89,10 @@
             line-height: 1.2;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 2rem; }
+            .fm-text { font-size: 2.5rem; }
         }
 
-        /* ESTILOS MIENTRAS SINTONIZA */
+        /* ESTILOS MIENTRAS SINTONIZA O ESTÁ VACÍO */
         .fm-text-container.tuning-mode {
             filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) !important;
         }
@@ -123,7 +123,6 @@
             
             .visualizer-container { margin-top: 0 !important; height: 22px !important; }
             
-            /* Fuerza que en celulares horizontales siempre se divida en dos líneas */
             .mobile-break { display: block !important; }
         }
     </style>
@@ -141,6 +140,8 @@
                 <select id="theme-selector" class="bg-background text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none hover:bg-primary hover:text-black transition-colors uppercase">
                     <option value="vc.json">Vice City</option>
                     <option value="gta3.json">GTA III</option>
+                    <option value="gtasa.json">San Andreas</option>
+                    <option value="vcs.json">Vice City Stories</option>
                     <!-- <option value="gta4.json">GTA IV</option> -->
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
@@ -201,17 +202,18 @@
         </div>
     </main>
 
-    <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
-        <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-colors">
+    <!-- El Footer ahora tiene border-primary y los botones usan text-primary y border-primary para adaptarse globalmente -->
+    <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-primary shadow-[4px_4px_0px_#000000] transition-colors duration-500">
+        <button id="toggle-btn" class="flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors">
             <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">power_settings_new</span>
             <span>POWER</span>
         </button>
 
-        <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none transition-colors">
+        <div id="volume-container" class="flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none transition-colors">
             <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">volume_up</span>
             <span>VOLUME</span>
             
-            <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50">
+            <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-primary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50 cursor-default">
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
             </div>
         </div>
