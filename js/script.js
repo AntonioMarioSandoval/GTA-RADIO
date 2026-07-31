@@ -22,6 +22,7 @@ const volumePopup = document.getElementById('volume-popup');
 
 let currentStationIndex = 0;
 let isPlaying = false;
+let isTuning = false; 
 let radioTimeout; 
 
 let audioCtx;
@@ -133,12 +134,21 @@ function updateUI(direction = 'none') {
     if (stations.length === 0) return; 
 
     const currentStation = stations[currentStationIndex];
+    const fmTextContainer = document.querySelector('.fm-text-container');
     
-    // Agregamos "ESTÁS ESCUCHANDO:" al texto principal
-    if (isPlaying) {
-        stationNameTop.innerText = "ESTÁS ESCUCHANDO: " + currentStation.name;
+    // El texto ahora usa Spans interactivos. En PC es 1 línea, en celular son 2 líneas.
+    if (isPlaying && isTuning) {
+        stationNameTop.classList.add('tuning-mode');
+        fmTextContainer.classList.add('tuning-mode');
+        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">SINTONIZANDO...</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
+    } else if (isPlaying && !isTuning) {
+        stationNameTop.classList.remove('tuning-mode');
+        fmTextContainer.classList.remove('tuning-mode');
+        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">ESTÁS ESCUCHANDO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
     } else {
-        stationNameTop.innerText = "APAGADO: " + currentStation.name;
+        stationNameTop.classList.remove('tuning-mode');
+        fmTextContainer.classList.remove('tuning-mode');
+        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">APAGADO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
     }
 
     const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
@@ -146,13 +156,23 @@ function updateUI(direction = 'none') {
 
     let centralStationHTML = '';
     
-    if (isPlaying) {
+    if (isPlaying && !isTuning) {
         centralStationHTML = `
         <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
             <div class="arrow-glow absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">▶</div>
             <div class="arrow-glow absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">◀</div>
             <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-primary bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] glow-neon transition-colors duration-300">
                 <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
+            </div>
+        </div>
+        `;
+    } else if (isPlaying && isTuning) {
+        centralStationHTML = `
+        <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
+            <div class="absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-white/40 animate-pulse text-2xl md:text-3xl z-20">▶</div>
+            <div class="absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-white/40 animate-pulse text-2xl md:text-3xl z-20">◀</div>
+            <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-gray-400 bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] grayscale animate-pulse transition-colors duration-300">
+                <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-60">
             </div>
         </div>
         `;
@@ -195,6 +215,11 @@ function updateUI(direction = 'none') {
 audioPlayer.addEventListener('playing', () => {
     staticAudio.volume = 0; 
     audioPlayer.volume = volumeSlider.value;
+    
+    if (isTuning) {
+        isTuning = false;
+        updateUI('none');
+    }
 });
 
 function playRadio() {
@@ -232,21 +257,23 @@ function togglePower() {
     initVisualizer();
     isPlaying = !isPlaying;
 
-    updateUI('none');
-    
     if (isPlaying) {
+        isTuning = true; 
         toggleBtn.className = "flex flex-col items-center justify-center bg-secondary-container text-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] border-2 border-secondary-container transition-colors glow-neon-cyan";
         
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
+        updateUI('none');
         playRadio();
     } else {
+        isTuning = false;
         toggleBtn.className = "flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-secondary hover:text-black transition-colors";
         clearTimeout(radioTimeout);
         audioPlayer.pause();
         audioPlayer.src = ""; 
         staticAudio.pause();
+        updateUI('none');
     }
 }
 
@@ -260,6 +287,10 @@ function changeStation(direction) {
         currentStationIndex = (currentStationIndex + 1) % stations.length;
     } else {
         currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
+    }
+    
+    if (isPlaying) {
+        isTuning = true; 
     }
     
     updateUI(direction); 
@@ -302,9 +333,6 @@ volumeSlider.addEventListener('input', (e) => {
     }
 });
 
-// ==========================================
-// GESTIÓN DEL CAMBIO DE JUEGOS
-// ==========================================
 async function loadStations(jsonFile) {
     try {
         applyVisualTheme(jsonFile);
@@ -317,16 +345,17 @@ async function loadStations(jsonFile) {
         
         currentStationIndex = 0;
         
-        updateUI('none');
-        
-        // Si la radio está encendida al cambiar de temática, arranca automáticamente la nueva emisora
         if (isPlaying) {
+            isTuning = true; 
+            updateUI('none');
             playRadio();
+        } else {
+            updateUI('none');
         }
 
     } catch (error) {
         console.error(`Error al cargar ${jsonFile}:`, error);
-        stationNameTop.innerText = "ERROR DE SEÑAL";
+        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">ERROR DE SEÑAL</span> <span class="block md:inline mobile-break">VERIFIQUE LA CONEXIÓN</span>`;
     }
 }
 

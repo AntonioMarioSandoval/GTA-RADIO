@@ -74,7 +74,7 @@
 
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         
-        /* Efecto de texto principal (Solido y Centrado) */
+        /* Efectos de texto principal */
         .fm-text-container {
             filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
             transition: filter 0.5s ease;
@@ -86,12 +86,21 @@
             color: var(--theme-primary, #ffabf3);
             transition: color 0.5s ease;
             text-align: center;
+            line-height: 1.2;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 2.5rem; }
+            .fm-text { font-size: 2rem; }
         }
 
-        /* Se realizo optimizacion Landscape Movil */
+        /* ESTILOS MIENTRAS SINTONIZA */
+        .fm-text-container.tuning-mode {
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)) !important;
+        }
+        .fm-text.tuning-mode {
+            color: #9ca3af !important;
+        }
+
+        /* Optimización Landscape Móvil */
         @media (max-height: 500px) and (orientation: landscape) {
             .app-header { padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; }
             .app-header > div:first-child { font-size: 1.1rem !important; } 
@@ -103,7 +112,7 @@
             
             .main-container { padding-top: 0.5rem !important; padding-bottom: 7rem !important; justify-content: center !important; gap: 8px !important; }
             
-            .station-header { margin-bottom: 0 !important; margin-top: 0 !important; }
+            .station-header { margin-bottom: 0 !important; margin-top: 0 !important; min-height: 50px !important; justify-content: flex-end !important; }
             .fm-text { font-size: 1.1rem !important; }
             .fm-text-container { filter: drop-shadow(0 0 8px var(--theme-primary, #ffabf3)) !important; }
             
@@ -113,6 +122,9 @@
             #carousel-container { gap: 1.5rem !important; }
             
             .visualizer-container { margin-top: 0 !important; height: 22px !important; }
+            
+            /* Fuerza que en celulares horizontales siempre se divida en dos líneas */
+            .mobile-break { display: block !important; }
         }
     </style>
 </head>
@@ -127,24 +139,23 @@
         <nav class="flex gap-2 md:gap-4 items-center">
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="bg-background text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none hover:bg-primary hover:text-black transition-colors uppercase">
-                    <option value="vc.json">GTA Vice City</option>
+                    <option value="vc.json">Vice City</option>
                     <option value="gta3.json">GTA III</option>
-                    <!-- <option value="gtalcs.json">GTA Liberty City Stories</option> -->
-                    <!-- <option value="gtavcs.json">GTA Vice City Stories</option> -->
-                    <!-- <option value="gtasa.json">GTA San Andreas</option> -->
                     <!-- <option value="gta4.json">GTA IV</option> -->
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
-                    <span class="material-symbols-outlined text-[12px] md:text-base"></span>
+                    <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
                 </div>
             </div>
         </nav>
     </header>
 
     <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
-        <div class="station-header mb-8 md:mb-12 flex flex-col items-center fm-text-container text-center px-4">
+        
+        <div class="station-header mb-8 md:mb-12 flex flex-col items-center justify-end fm-text-container text-center px-4 min-h-[65px] md:min-h-[100px]">
             <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3 text-center">
-                CARGANDO...
+                <span class="block md:inline mobile-break">CARGANDO...</span> 
+                <span class="block md:inline mobile-break">POR FAVOR ESPERE</span>
             </div>
         </div>
 
@@ -161,36 +172,44 @@
             </button>
         </div>
 
-        <div class="visualizer-container mt-16 flex items-end justify-center gap-1 h-16 w-full max-w-lg px-8">
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-2 md:w-3 bg-secondary-container h-[10%] transition-all duration-75"></div>
+        <div class="visualizer-container mt-16 flex items-end justify-center gap-1 h-16 w-full max-w-lg px-6">
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
         </div>
     </main>
 
     <header class="app-footer fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:pb-6 bg-surface-container border-t-4 border-secondary shadow-[4px_4px_0px_#000000]">
         <button id="toggle-btn" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-colors">
-            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl"></span>
-            <span>ON/OFF</span>
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">power_settings_new</span>
+            <span>POWER</span>
         </button>
 
         <div id="volume-container" class="flex flex-col items-center justify-center text-secondary border-2 border-secondary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] relative cursor-pointer select-none transition-colors">
-            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl"></span>
-            <span>VOLUMEN</span>
+            <span class="material-symbols-outlined mb-0.5 text-lg md:text-2xl">volume_up</span>
+            <span>VOLUME</span>
             
             <div id="volume-popup" class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-8 h-32 bg-surface-dim border-2 border-secondary hidden flex-col justify-start p-1 shadow-[4px_4px_0px_#000000] z-50">
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
