@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Playback FM",
+        "url": "https://archive.org/download/gta-sa-radios/Playback%20FM.mp3",
+        "duration": 2810,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/4/4b/PlaybackFM.JPG/revision/latest/scale-to-width-down/200?cb=20150814235321"
+    },
+    {
+        "name": "K Rose",
+        "url": "https://archive.org/download/gta-sa-radios/K-Rose.mp3",
+        "duration": 2886,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/f/fa/KRose.JPG/revision/latest/scale-to-width-down/200?cb=20150814235731"
+    },
+    {
+        "name": "K-DST",
+        "url": "https://archive.org/download/gta-sa-radios/K-DST.mp3",
+        "duration": 4001,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/c/c4/KDSTLogo.png/revision/latest/scale-to-width-down/200?cb=20140418122930"
+    },
+    {
+        "name": "Bounce FM",
+        "url": "https://archive.org/download/gta-sa-radios/Bounce%20FM.mp3",
+        "duration": 3904,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/5/59/BounceFM.JPG/revision/latest/scale-to-width-down/200?cb=20150206124314"
+    },
+    {
+        "name": "SF-UR",
+        "url": "https://archive.org/download/gta-sa-radios/SF-UR.mp3",
+        "duration": 3974,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/f/f1/SF-UR.png/revision/latest/scale-to-width-down/200?cb=20150815000419"
+    },
+    {
+        "name": "Radio Los Santos",
+        "url": "https://archive.org/download/gta-sa-radios/Radio%20Los%20Santos.mp3",
+        "duration": 3863,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/2/2d/RadioLosSantos.JPG/revision/latest/scale-to-width-down/200?cb=20150814235526"
+    },
+    {
+        "name": "Radio X",
+        "url": "https://archive.org/download/gta-sa-radios/Radio%20X.mp3",
+        "duration": 3469,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/2/2e/Radio_X.JPG/revision/latest/scale-to-width-down/200?cb=20150814235134"
+    },
+    {
+        "name": "CSR 103.9",
+        "url": "https://archive.org/download/gta-sa-radios/CSR%20103.9.mp3",
+        "duration": 2845,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/b/b3/CSR_103.9.jpg/revision/latest/scale-to-width-down/200?cb=20210715201512"
+    },
+    {
+        "name": "K-Jah West",
+        "url": "https://archive.org/download/gta-sa-radios/K-JAH%20West.mp3",
+        "duration": 3634,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/b/b9/KJahwest.JPG/revision/latest/scale-to-width-down/200?cb=20150814235629"
+    },
+    {
+        "name": "Master Sounds 98.3",
+        "url": "https://archive.org/download/gta-sa-radios/Master%20Sounds%2098.3.mp3",
+        "duration": 4062,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/4/4d/MasterSoundsLogo.png/revision/latest/scale-to-width-down/200?cb=20140415124415"
+    }
+]
