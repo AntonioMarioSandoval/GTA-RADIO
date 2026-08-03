@@ -2,13 +2,55 @@
     {
         "name": "Flash FM",
         "url": "https://archive.org/download/gta-vice-city-stories/FLASH.mp3",
-        "duration": 4644,
+        "duration": 3890,
         "logo": "https://static.wikia.nocookie.net/esgta/images/9/90/Flash_FM.png/revision/latest/scale-to-width-down/150?cb=20130701201401"
     },
     {
         "name": "V Rock",
         "url": "https://archive.org/download/gta-vice-city-stories/VROCK.mp3",
-        "duration": 3698,
+        "duration": 3580,
         "logo": "https://static.wikia.nocookie.net/esgta/images/5/56/V-Rock.png/revision/latest/scale-to-width-down/150?cb=20240901223829"
+    },
+    {
+        "name": "Paradise",
+        "url": "https://archive.org/download/gta-vice-city-stories/PARADISE.mp3",
+        "duration": 2477,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/7/77/ParadiseFMLogo.png/revision/latest/scale-to-width-down/150?cb=20230707094538"
+    },
+    {
+        "name": "VCPR",
+        "url": "https://archive.org/download/gta-vice-city-stories/VCPR.mp3",
+        "duration": 3899,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/1/19/VCPR.jpg/revision/latest/scale-to-width-down/150?cb=20150824195146"
+    },
+    {
+        "name": "VCFL Radio",
+        "url": "https://archive.org/download/gta-vice-city-stories/VCFL.mp3",
+        "duration": 2335,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/3/3d/VCFL.png/revision/latest/scale-to-width-down/150?cb=20150824123928"
+    },
+    {
+        "name": "The Wave 103",
+        "url": "https://archive.org/download/gta-vice-city-stories/WAVE.mp3",
+        "duration": 3600,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/2/24/Wave_103.png/revision/latest/scale-to-width-down/150?cb=20130627225002"
+    },
+    {
+        "name": "Fresh 105 FM",
+        "url": "https://archive.org/download/gta-vice-city-stories/FRESH.mp3",
+        "duration": 1784,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/8/8e/Fresh_FM.png/revision/latest/scale-to-width-down/150?cb=20150518202131"
+    },
+    {
+        "name": "Espantoso",
+        "url": "https://archive.org/download/gta-vice-city-stories/ESPANT.mp3",
+        "duration": 1832,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/6/60/Radio_Espantoso_VCS.png/revision/latest/scale-to-width-down/150?cb=20230514180512"
+    },
+    {
+        "name": "Emotion 98.3",
+        "url": "https://archive.org/download/gta-vice-city-stories/EMOTION.mp3",
+        "duration": 4147,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/3/3f/Emotion98.3_Logo_Secundario.png/revision/latest/scale-to-width-down/150?cb=20230707095045"
     }
 ]
