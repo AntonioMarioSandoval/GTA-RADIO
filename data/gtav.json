@@ -1,110 +1,110 @@
 [
+        {
+        "name": "East Los FM",
+        "url": "https://archive.org/download/gta-v-radios/East%20Los%20FM.mp3",
+        "duration": 2465,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/d/d0/East_Los_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710151923"
+    },
     {
         "name": "Blaine County Radio",
         "url": "https://archive.org/download/gta-v-radios/Blaine%20County%20Radio.mp3",
-        "duration": 3890,
+        "duration": 4892,
         "logo": "https://static.wikia.nocookie.net/esgta/images/0/05/Blaine_County_Talk_Radio_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710151140"
     },
     {
         "name": "Blonded Radio",
         "url": "https://archive.org/download/gta-v-radios/Blonded%20Radio.mp3",
-        "duration": 3890,
+        "duration": 6140,
         "logo": "https://static.wikia.nocookie.net/esgta/images/b/bf/Blonded_Los_Santos_97.8_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/170?cb=20240710154246"
     },
     {
         "name": "Blue Ark",
         "url": "https://archive.org/download/gta-v-radios/Blue%20Ark.mp3",
-        "duration": 3890,
+        "duration": 4790,
         "logo": "https://static.wikia.nocookie.net/esgta/images/2/2e/The_Blue_Ark_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710124932"
     },
     {
         "name": "Channel X",
         "url": "https://archive.org/download/gta-v-radios/Channel%20X.mp3",
-        "duration": 3890,
+        "duration": 2828,
         "logo": "https://static.wikia.nocookie.net/esgta/images/5/5e/Radio_X_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710145842"
-    },
-    {
-        "name": "East Los FM",
-        "url": "https://archive.org/download/gta-v-radios/East%20Los%20FM.mp3",
-        "duration": 3890,
-        "logo": "https://static.wikia.nocookie.net/esgta/images/d/d0/East_Los_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710151923"
     },
     {
         "name": "FlyLo FM",
         "url": "https://archive.org/download/gta-v-radios/FlyLo%20FM.mp3",
-        "duration": 3890,
+        "duration": 4298,
         "logo": "https://static.wikia.nocookie.net/esgta/images/3/3b/FlyLo_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710131734"
     },
     {
         "name": "Los Santos Rock Radio",
         "url": "https://archive.org/download/gta-v-radios/Los%20Santos%20Rock%20Radio.mp3",
-        "duration": 3890,
+        "duration": 9322,
         "logo": "https://static.wikia.nocookie.net/esgta/images/e/e3/Los_Santos_Rock_Radio_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710144025"
     },
     {
         "name": "Los Santos Underground Radio",
         "url": "https://archive.org/download/gta-v-radios/Los%20Santos%20Underground%20Radio.mp3",
-        "duration": 3890,
+        "duration": 16731,
         "logo": "https://static.wikia.nocookie.net/esgta/images/7/76/LSUR_logo_GTA-O.svg/revision/latest/scale-to-width-down/170?cb=20240710155951"
     },
     {
         "name": "Non-Stop-Pop FM",
         "url": "https://archive.org/download/gta-v-radios/Non-Stop-Pop%20FM.mp3",
-        "duration": 3890,
+        "duration": 10006,
         "logo": "https://static.wikia.nocookie.net/esgta/images/8/87/Non_Stop_Pop_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710145314"
     },
     {
         "name": "Radio Los Santos",
         "url": "https://archive.org/download/gta-v-radios/Radio%20Los%20Santos.mp3",
-        "duration": 3890,
+        "duration": 6691,
         "logo": "https://static.wikia.nocookie.net/esgta/images/8/83/Radio_Los_Santos_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710111144"
     },
     {
         "name": "Radio Mirror Park",
         "url": "https://archive.org/download/gta-v-radios/Radio%20Mirror%20Park.mp3",
-        "duration": 3890,
+        "duration": 9160,
         "logo": "https://static.wikia.nocookie.net/esgta/images/3/39/Radio_Mirror_Park_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710133042"
     },
     {
         "name": "Rebel Radio",
         "url": "https://archive.org/download/gta-v-radios/Rebel%20Radio.mp3",
-        "duration": 3890,
+        "duration": 3457,
         "logo": "https://static.wikia.nocookie.net/esgta/images/d/da/Rebel_Radio_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710153056"
     },
     {
         "name": "Soulwax FM",
         "url": "https://archive.org/download/gta-v-radios/Soulwax%20FM.mp3",
-        "duration": 3890,
+        "duration": 2567,
         "logo": "https://static.wikia.nocookie.net/esgta/images/0/06/Soulwax_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710152319"
     },
     {
         "name": "Space 103.2",
         "url": "https://archive.org/download/gta-v-radios/Space%20103.2.mp3",
-        "duration": 3890,
+        "duration": 5653,
         "logo": "https://static.wikia.nocookie.net/esgta/images/a/a4/Space_103.2_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710133506"
     },
     {
         "name": "The Lab",
         "url": "https://archive.org/download/gta-v-radios/The%20Lab.mp3",
-        "duration": 3890,
+        "duration": 3456,
         "logo": "https://static.wikia.nocookie.net/esgta/images/5/53/The_Lab_logo_GTA-V.svg/revision/latest/scale-to-width-down/170?cb=20240710153649"
     },
     {
         "name": "Vinewood Boulevard Radio",
         "url": "https://archive.org/download/gta-v-radios/Vinewood%20Boulevard%20Radio.mp3",
-        "duration": 3890,
+        "duration": 3958,
         "logo": "https://static.wikia.nocookie.net/esgta/images/a/a6/Vinewood_Boulevard_Radio_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710143339"
     },
     {
         "name": "West Coast Classics",
         "url": "https://archive.org/download/gta-v-radios/West%20Coast%20Classics.mp3",
-        "duration": 3890,
+        "duration": 6978,
         "logo": "https://static.wikia.nocookie.net/esgta/images/8/88/West_Coast_Classics_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710111649"
     },
     {
         "name": "WorldWide FM",
         "url": "https://archive.org/download/gta-v-radios/WorldWide%20FM.mp3",
-        "duration": 3890,
+        "duration": 7232,
         "logo": "https://static.wikia.nocookie.net/esgta/images/2/25/Worldwide_FM_logo_GTA-V.svg/revision/latest/scale-to-width-down/180?cb=20240710131318"
     }
 ]
