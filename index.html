@@ -71,13 +71,13 @@
             0% { transform: translateX(-80px); opacity: 0; } 
             100% { transform: translateX(0); opacity: 1; } 
         }
-        
+
         .fm-text-container {
             filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
             transition: filter 0.5s ease;
         }
         .fm-text {
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             font-weight: 900;
             font-style: italic;
             color: var(--theme-primary, #ffabf3);
@@ -86,7 +86,7 @@
             line-height: 1.2;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 2rem; }
+            .fm-text { font-size: 2.5rem; }
         }
 
         .fm-text-container.tuning-mode {
@@ -133,12 +133,12 @@
         <nav class="flex gap-2 md:gap-4 items-center">
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="appearance-none bg-none bg-surface-dim text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none transition-colors uppercase shadow-[2px_2px_0px_#000000]">
+                    <option value="vc.json">Vice City</option>
                     <option value="gta3.json">GTA III</option>
-                    <option value="vc.json">GTA Vice City</option>
-                    <option value="gtasa.json">GTA San Andreas</option>
-                    <option value="vcs.json">GTA Vice City Stories</option>
-                    <!--<option value="gta4.json">GTA IV</option>-->
-                    <!--<option value="gtav.json">GTA V</option>-->
+                    <option value="gtasa.json">San Andreas</option>
+                    <option value="vcs.json">Vice City Stories</option>
+                    <!-- <option value="gta4.json">GTA IV</option> -->
+                    <!-- <option value="gtav.json">GTA V</option> -->
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
                     <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
@@ -210,10 +210,7 @@
                 <span>VOLUME</span>
             </button>
             
-            <!-- FIX: h-auto en lugar de h-40 para que abrace perfectamente al contenido interior sin cortar bordes -->
             <div id="volume-popup" class="absolute bottom-[calc(100%+15px)] left-1/2 -translate-x-1/2 bg-surface-dim border-2 border-primary hidden flex-col items-center p-2 shadow-[4px_4px_0px_#000000] z-50 h-auto w-12 md:w-14 transition-all">
-                
-                <!-- Altura fija h-32 para el slider en lugar de flex-1 para evitar bugs de desbordamiento en webkit -->
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5" class="h-32 w-full mb-3 cursor-pointer">
                 
                 <button id="mute-btn" class="text-primary interactive-btn transition-colors flex items-center justify-center flex-shrink-0" title="Mute/Unmute">
@@ -221,6 +218,9 @@
                 </button>
             </div>
         </div>
+        
+        <!-- === NUEVO: TEXTO DE VERSIÓN === -->
+        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">V0.8</span>
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
