@@ -12,13 +12,17 @@ const toggleBtn = document.getElementById('toggle-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const stationNameTop = document.getElementById('station-name-top');
-const volumeSlider = document.getElementById('volume-slider');
 const carouselContainer = document.getElementById('carousel-container');
 const visualizerBars = document.querySelectorAll('.visualizer-bar');
 const themeSelector = document.getElementById('theme-selector');
 
-const volumeContainer = document.getElementById('volume-container');
-const volumePopup = document.getElementById('volume-popup');
+// Elementos del Volumen
+const volToggleBtn = document.getElementById('volume-toggle-btn');
+const volPopup = document.getElementById('volume-popup');
+const volSlider = document.getElementById('volume-slider');
+const muteBtn = document.getElementById('mute-btn');
+const volIconMain = document.getElementById('vol-icon-main');
+const volIconPopup = document.getElementById('vol-icon-popup');
 
 let currentStationIndex = 0;
 let isPlaying = false;
@@ -30,34 +34,58 @@ let analyser;
 let dataArray;
 let isVisualizerInitialized = false;
 
+// Estado del Volumen
+let currentVolume = 0.5;
+let isMuted = false;
+
+audioPlayer.volume = currentVolume;
+staticAudio.volume = 0;
+
 // ==========================================
-// CONFIGURACIÓN DE TEMA POR JUEGO
+// CONFIGURACIÓN DE TEMAS POR JUEGO
 // ==========================================
 const gameThemes = {
     'vc.json': { 
         primary: '#ffabf3',    
         secondary: '#00fbfb',  
-        bg: '#131313'
+        bg: '#131313',
+        surface: '#523F4C',
+        footer: '#20201f'
     },
     'gta3.json': { 
         primary: '#ffd700',    
         secondary: '#9ca3af',  
-        bg: '#1a1f24'
+        bg: '#1a1f24',
+        surface: '#2a3239',
+        footer: '#11161b'
     },
     'gtasa.json': {
         primary: '#c5cee9',    
         secondary: '#ffffff',  
-        bg: '#010000'          
+        bg: '#010000',
+        surface: '#111111',
+        footer: '#0a0a0a'
     },
     'vcs.json': {
         primary: '#14f0d8',    
         secondary: '#f9fa99',  
-        bg: '#320049'          
+        bg: '#320049',
+        surface: '#4a006e',
+        footer: '#220033'
     },
     'gta4.json': { 
         primary: '#d1d5db',    
         secondary: '#8b8b83',  
-        bg: '#292524'
+        bg: '#292524',
+        surface: '#3e3835',
+        footer: '#1f1c1a'
+    },
+    'gtav.json': { 
+        primary: '#5c9e31',    
+        secondary: '#ffffff',  
+        bg: '#0d0f0b',
+        surface: '#1c2417',
+        footer: '#0f140d'
     }
 };
 
@@ -76,6 +104,8 @@ function applyVisualTheme(jsonFile) {
             --theme-primary: ${theme.primary};
             --theme-secondary: ${theme.secondary};
             --theme-bg: ${theme.bg};
+            --theme-surface: ${theme.surface};
+            --theme-footer: ${theme.footer};
         }
     
         .text-primary { color: var(--theme-primary) !important; }
@@ -86,6 +116,30 @@ function applyVisualTheme(jsonFile) {
         .border-secondary-container { border-color: var(--theme-secondary) !important; }
         .bg-secondary-container { background-color: var(--theme-secondary) !important; }
         
+        .bg-surface-dim { background-color: var(--theme-surface) !important; }
+        .text-surface-dim { color: var(--theme-surface) !important; }
+        .border-surface-variant { border-color: var(--theme-surface) !important; }
+
+        .app-footer { 
+            background-color: var(--theme-footer) !important; 
+            border-top-color: var(--theme-primary) !important; 
+        }
+        
+        .interactive-btn { cursor: pointer; }
+        .interactive-btn:hover { filter: brightness(1.2); }
+        
+        .power-on-btn { 
+            background-color: var(--theme-secondary) !important; 
+            color: var(--theme-surface) !important; 
+            border-color: var(--theme-secondary) !important; 
+            box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; 
+        }
+        .power-off-btn { 
+            background-color: var(--theme-surface) !important; 
+            color: var(--theme-primary) !important; 
+            border-color: var(--theme-primary) !important; 
+        }
+
         .glow-neon { box-shadow: 0 0 20px var(--theme-primary), inset 0 0 10px var(--theme-primary) !important; }
         .glow-neon-cyan { box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; }
         
@@ -97,11 +151,84 @@ function applyVisualTheme(jsonFile) {
         input[type=range][orient=vertical] { accent-color: var(--theme-secondary) !important; }
     `;
     
-    // Forzamos el cambio de color del footer inmediatamente si la radio está apagada
     if (!isPlaying) {
-        toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
+        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
     }
 }
+
+// ==========================================
+// CONTROL DE VOLUMEN Y MUTE
+// ==========================================
+function updateVolumeIcons(vol) {
+    if (vol === 0 || isMuted) {
+        volIconMain.innerText = 'volume_off';
+        volIconPopup.innerText = 'volume_off';
+    } else if (vol < 0.5) {
+        volIconMain.innerText = 'volume_down';
+        volIconPopup.innerText = 'volume_down';
+    } else {
+        volIconMain.innerText = 'volume_up';
+        volIconPopup.innerText = 'volume_up';
+    }
+}
+
+function applyVolume() {
+    const effectiveVol = isMuted ? 0 : currentVolume;
+    
+    // FIX ESTÁTICA: Si está sintonizando, aplicamos volumen a la estática. Si no, forzamos cero.
+    if (isTuning) {
+        staticAudio.volume = effectiveVol * 0.8;
+    } else {
+        staticAudio.volume = 0;
+    }
+    
+    audioPlayer.volume = effectiveVol; 
+    updateVolumeIcons(effectiveVol);
+}
+
+// Abrir/Cerrar menú flotante (Click)
+volToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (volPopup.classList.contains('hidden')) {
+        volPopup.classList.remove('hidden');
+        volPopup.classList.add('flex');
+    } else {
+        volPopup.classList.add('hidden');
+        volPopup.classList.remove('flex');
+    }
+});
+
+// Cerrar si haces clic afuera
+document.addEventListener('click', (e) => {
+    if (!volPopup.contains(e.target) && !volToggleBtn.contains(e.target)) {
+        volPopup.classList.add('hidden');
+        volPopup.classList.remove('flex');
+    }
+});
+
+volPopup.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+volSlider.addEventListener('input', (e) => {
+    currentVolume = parseFloat(e.target.value);
+    if (currentVolume > 0) {
+        isMuted = false;
+    }
+    applyVolume();
+});
+
+muteBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    if (isMuted) {
+        volSlider.value = 0;
+    } else {
+        volSlider.value = currentVolume === 0 ? 0.5 : currentVolume;
+        currentVolume = parseFloat(volSlider.value);
+    }
+    applyVolume();
+});
+
 
 // ==========================================
 // ECUALIZADOR
@@ -148,7 +275,6 @@ function renderFrame() {
 function updateUI(direction = 'none') {
     const fmTextContainer = document.querySelector('.fm-text-container');
 
-    // === MANEJO DE ESTADO VACÍO (SIN ESTACIONES CARGADAS) ===
     if (stations.length === 0) {
         stationNameTop.classList.add('tuning-mode');
         fmTextContainer.classList.add('tuning-mode');
@@ -156,15 +282,14 @@ function updateUI(direction = 'none') {
         
         carouselContainer.innerHTML = `
             <div class="scale-100 md:scale-110 z-10 relative opacity-60 filter grayscale transition-all duration-300">
-                <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-gray-500 bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
-                    <span class="text-gray-400 font-headline-md text-xl md:text-2xl text-center">PRÓXIMAMENTE</span>
+                <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
+                    <span class="text-surface-variant font-headline-md text-xl md:text-2xl text-center">PRÓXIMAMENTE</span>
                 </div>
             </div>
         `;
         return;
     }
 
-    // === MANEJO NORMAL (CON ESTACIONES) ===
     const currentStation = stations[currentStationIndex];
     
     if (isPlaying && isTuning) {
@@ -242,21 +367,28 @@ function updateUI(direction = 'none') {
     }
 }
 
+// FIX ESTÁTICA: Modificamos el listener 'playing'
 audioPlayer.addEventListener('playing', () => {
-    staticAudio.volume = 0; 
-    audioPlayer.volume = volumeSlider.value;
+    // 1. Declaramos que ya no está buscando señal ANTES de aplicar el volumen
+    isTuning = false;
     
-    if (isTuning) {
-        isTuning = false;
-        updateUI('none');
-    }
+    // 2. Apagamos la estática por completo para ahorrar rendimiento
+    staticAudio.pause();
+    
+    // 3. Aplicamos el volumen correcto (applyVolume detectará isTuning = false y dejará estática en 0)
+    applyVolume();
+    
+    // 4. Actualizamos la interfaz
+    updateUI('none');
 });
 
 function playRadio() {
     if (!isPlaying) return; 
     clearTimeout(radioTimeout);
 
-    staticAudio.volume = volumeSlider.value * 0.8;
+    isTuning = true;
+    applyVolume(); // Activa la estática según el volumen actual
+    
     audioPlayer.pause();
     
     if (staticAudio.paused) {
@@ -289,7 +421,7 @@ function togglePower() {
 
     if (isPlaying) {
         isTuning = true; 
-        toggleBtn.className = "flex flex-col items-center justify-center bg-secondary-container text-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] border-2 border-secondary-container transition-colors glow-neon-cyan";
+        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-on-btn";
         
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
@@ -298,7 +430,7 @@ function togglePower() {
         playRadio();
     } else {
         isTuning = false;
-        toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
+        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
         clearTimeout(radioTimeout);
         audioPlayer.pause();
         audioPlayer.src = ""; 
@@ -327,64 +459,22 @@ function changeStation(direction) {
     if (isPlaying) playRadio(); 
 }
 
-let volumeTimeout;
-
-volumeContainer.addEventListener('mouseenter', () => {
-    clearTimeout(volumeTimeout);
-    volumePopup.classList.remove('hidden');
-    volumePopup.classList.add('flex');
-});
-
-volumeContainer.addEventListener('mouseleave', () => {
-    volumeTimeout = setTimeout(() => {
-        volumePopup.classList.remove('flex');
-        volumePopup.classList.add('hidden');
-    }, 300);
-});
-
-volumeContainer.addEventListener('click', (e) => {
-    if (e.target === volumeSlider) return;
-    
-    if (volumePopup.classList.contains('hidden')) {
-        volumePopup.classList.remove('hidden');
-        volumePopup.classList.add('flex');
-    } else {
-        volumePopup.classList.remove('flex');
-        volumePopup.classList.add('hidden');
-    }
-});
-
-volumeSlider.addEventListener('input', (e) => {
-    const vol = parseFloat(e.target.value);
-    if (staticAudio.volume > 0) {
-        staticAudio.volume = vol * 0.8;
-    } else {
-        audioPlayer.volume = vol;
-    }
-});
-
-// ==========================================
-// GESTIÓN DEL CAMBIO DE JUEGOS Y ARCHIVOS FALTANTES
-// ==========================================
 async function loadStations(jsonFile) {
     try {
         applyVisualTheme(jsonFile);
 
         const response = await fetch('data/' + jsonFile);
         
-        // Si el archivo no existe o falla la lectura (Ej: Error 404), lanzamos error para vaciar el array
         if (!response.ok) {
             throw new Error(`Archivo no existe o falla en red.`);
         }
         
         const fetchedData = await response.json();
         
-        // Si el archivo existe pero el arreglo JSON está vacío []
         if (fetchedData.length === 0) {
             throw new Error(`El archivo JSON está vacío.`);
         }
 
-        // Carga exitosa y normal si hay estaciones
         stations = fetchedData;
         currentStationIndex = 0;
         
@@ -399,17 +489,16 @@ async function loadStations(jsonFile) {
     } catch (error) {
         console.warn(`Aviso: ${jsonFile} no tiene estaciones cargadas o no existe aún.`);
         
-        // Si la radio estaba sonando, la apagamos limpiamente
         if (isPlaying) {
             isPlaying = false;
-            toggleBtn.className = "flex flex-col items-center justify-center text-primary border-2 border-primary bg-surface-dim -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] hover:bg-primary hover:text-black transition-colors";
+            isTuning = false; // Nos aseguramos de apagar el tuning si hay error
+            toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
             clearTimeout(radioTimeout);
             audioPlayer.pause();
             audioPlayer.src = ""; 
             staticAudio.pause();
         }
         
-        // Vaciamos el array y forzamos la actualización de UI para mostrar el mensaje de "NO SE ENCONTRARON"
         stations = [];
         updateUI('none');
     }
@@ -422,6 +511,5 @@ themeSelector.addEventListener('change', (e) => {
 toggleBtn.addEventListener('click', togglePower);
 nextBtn.addEventListener('click', () => changeStation('next'));
 prevBtn.addEventListener('click', () => changeStation('prev'));
-audioPlayer.volume = volumeSlider.value;
 
 loadStations(themeSelector.value);
