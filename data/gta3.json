@@ -1,5 +1,11 @@
 [
     {
+        "name": "Flashback FM",
+        "url": "https://archive.org/download/gta3fullradio/FLASH.mp3",
+        "duration": 1126,
+        "logo": "https://static.wikia.nocookie.net/esgta/images/a/a6/FlashbackFMLogo.png/revision/latest/scale-to-width-down/148?cb=20131220134212"
+    },
+    {
         "name": "Head Radio",
         "url": "https://archive.org/download/gta3fullradio/HEAD.mp3",
         "duration": 1406,
@@ -40,12 +46,6 @@
         "url": "https://archive.org/download/gta3fullradio/MSX.mp3",
         "duration": 1500,
         "logo": "https://static.wikia.nocookie.net/esgta/images/d/d3/MSX_FM_logo.png/revision/latest/scale-to-width-down/150?cb=20130615145822"
-    },
-    {
-        "name": "Flashback FM",
-        "url": "https://archive.org/download/gta3fullradio/FLASH.mp3",
-        "duration": 1126,
-        "logo": "https://static.wikia.nocookie.net/esgta/images/a/a6/FlashbackFMLogo.png/revision/latest/scale-to-width-down/148?cb=20131220134212"
     },
     {
         "name": "Chatterbox",
