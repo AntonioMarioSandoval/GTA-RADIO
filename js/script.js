@@ -140,8 +140,8 @@ function applyVisualTheme(jsonFile) {
             border-color: var(--theme-primary) !important; 
         }
 
-        .glow-neon { box-shadow: 0 0 20px var(--theme-primary), inset 0 0 10px var(--theme-primary) !important; }
-        .glow-neon-cyan { box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; }
+        .glow-neon { box-shadow: 0 0 15px var(--theme-primary), inset 0 0 5px var(--theme-primary) !important; }
+        .glow-neon-cyan { box-shadow: 0 0 15px var(--theme-secondary), inset 0 0 5px var(--theme-secondary) !important; }
         
         .header-glow { filter: drop-shadow(0 0 10px var(--theme-primary)) !important; }
         .arrow-glow { filter: drop-shadow(0 0 8px var(--theme-primary)) !important; }
@@ -175,7 +175,6 @@ function updateVolumeIcons(vol) {
 function applyVolume() {
     const effectiveVol = isMuted ? 0 : currentVolume;
     
-    // FIX ESTÁTICA: Si está sintonizando, aplicamos volumen a la estática. Si no, forzamos cero.
     if (isTuning) {
         staticAudio.volume = effectiveVol * 0.8;
     } else {
@@ -186,7 +185,6 @@ function applyVolume() {
     updateVolumeIcons(effectiveVol);
 }
 
-// Abrir/Cerrar menú flotante (Click)
 volToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (volPopup.classList.contains('hidden')) {
@@ -198,7 +196,6 @@ volToggleBtn.addEventListener('click', (e) => {
     }
 });
 
-// Cerrar si haces clic afuera
 document.addEventListener('click', (e) => {
     if (!volPopup.contains(e.target) && !volToggleBtn.contains(e.target)) {
         volPopup.classList.add('hidden');
@@ -231,7 +228,7 @@ muteBtn.addEventListener('click', () => {
 
 
 // ==========================================
-// ECUALIZADOR
+// ECUALIZADOR DINÁMICO TIPO PREMIERE PRO
 // ==========================================
 function initVisualizer() {
     if (isVisualizerInitialized) return;
@@ -244,7 +241,17 @@ function initVisualizer() {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     
-    analyser.fftSize = 128; 
+    // Balance óptimo de resolución para evitar que se divida demasiado el sonido
+    analyser.fftSize = 1024; 
+    
+    // Suavizado elegante para las caídas de las barras
+    analyser.smoothingTimeConstant = 0.8; 
+    
+    // TRUCO DE SATURACIÓN: Damos mucho espacio en los decibeles máximos
+    // para que la izquierda no se vea cuadrada y tenga picos precisos.
+    analyser.minDecibels = -85;
+    analyser.maxDecibels = -15; 
+
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
     
@@ -255,23 +262,45 @@ function initVisualizer() {
 function renderFrame() {
     requestAnimationFrame(renderFrame);
     
-    if (!isPlaying || staticAudio.volume > 0) {
-        visualizerBars.forEach(bar => bar.style.height = '10%');
+    if (!isPlaying || isTuning) {
+        visualizerBars.forEach((bar) => bar.style.height = '4%');
         return;
     }
 
     analyser.getByteFrequencyData(dataArray);
-    let step = Math.floor((dataArray.length * 0.7) / visualizerBars.length); 
 
     for (let i = 0; i < visualizerBars.length; i++) {
-        let value = dataArray[i * step]; 
-        let percent = (value / 255) * 100;
-        if (percent < 10) percent = 10; 
+        let binIndex = Math.floor(i * 1.4) + 1; 
+        
+        if (binIndex >= dataArray.length) binIndex = dataArray.length - 1;
+
+        let value = dataArray[binIndex] || 0; 
+        
+        // Si el archivo de audio cortó los agudos (valor menor a 15) en la parte derecha del visualizador, 
+        // inyectamos un poco de la energía de los instrumentos medios para que nunca se queden muertas.
+        if (i > 20 && value < 15) {
+            let fallbackBin = Math.floor(20 + ((i - 20) * 1));
+            value = (dataArray[fallbackBin] || 0) * 0.7; // Reducimos un poco para simular agudos
+        }
+
+        let percent = (value / 255) * 130; 
+        
+        // ECUALIZADOR VISUAL: 
+        // Frenamos un poco la izquierda (graves) para evitar saturación visual, 
+        // y damos un pequeñísimo impulso a la derecha (agudos).
+        let boost = 0.8 + (i * 0.015); 
+        percent = percent * boost; 
+        
+        if (percent < 4) percent = 4; 
+        if (percent > 100) percent = 100;
         
         visualizerBars[i].style.height = percent + '%';
     }
 }
 
+// ==========================================
+// INTERFAZ DE USUARIO
+// ==========================================
 function updateUI(direction = 'none') {
     const fmTextContainer = document.querySelector('.fm-text-container');
 
@@ -367,18 +396,11 @@ function updateUI(direction = 'none') {
     }
 }
 
-// FIX ESTÁTICA: Modificamos el listener 'playing'
 audioPlayer.addEventListener('playing', () => {
-    // 1. Declaramos que ya no está buscando señal ANTES de aplicar el volumen
     isTuning = false;
-    
-    // 2. Apagamos la estática por completo para ahorrar rendimiento
     staticAudio.pause();
-    
-    // 3. Aplicamos el volumen correcto (applyVolume detectará isTuning = false y dejará estática en 0)
+    staticAudio.volume = 0; 
     applyVolume();
-    
-    // 4. Actualizamos la interfaz
     updateUI('none');
 });
 
@@ -387,7 +409,7 @@ function playRadio() {
     clearTimeout(radioTimeout);
 
     isTuning = true;
-    applyVolume(); // Activa la estática según el volumen actual
+    applyVolume(); 
     
     audioPlayer.pause();
     
@@ -491,7 +513,7 @@ async function loadStations(jsonFile) {
         
         if (isPlaying) {
             isPlaying = false;
-            isTuning = false; // Nos aseguramos de apagar el tuning si hay error
+            isTuning = false;
             toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
             clearTimeout(radioTimeout);
             audioPlayer.pause();

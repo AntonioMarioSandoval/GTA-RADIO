@@ -44,7 +44,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 9999;
         }
-        .glow-neon { box-shadow: 0 0 20px theme('colors.primary'), inset 0 0 10px theme('colors.primary'); }
+        .glow-neon { box-shadow: 0 0 20px var(--theme-primary), inset 0 0 10px var(--theme-primary) !important; }
         .glow-neon-cyan { box-shadow: 0 0 20px theme('colors.secondary-container'), inset 0 0 10px theme('colors.secondary-container'); }
         .tv-static {
             background-image: repeating-radial-gradient(circle at 17% 32%, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
@@ -77,7 +77,7 @@
             transition: filter 0.5s ease;
         }
         .fm-text {
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             font-weight: 900;
             font-style: italic;
             color: var(--theme-primary, #ffabf3);
@@ -86,7 +86,7 @@
             line-height: 1.2;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 1.9rem; }
+            .fm-text { font-size: 2.5rem; }
         }
 
         .fm-text-container.tuning-mode {
@@ -94,6 +94,11 @@
         }
         .fm-text.tuning-mode {
             color: #9ca3af !important;
+        }
+
+        /* NUEVO: Reflejo en el suelo idéntico a la referencia */
+        .visualizer-container {
+            -webkit-box-reflect: below 2px linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.5) 100%);
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
@@ -116,7 +121,8 @@
             .arrow-icon { font-size: 1.5rem !important; }
             #carousel-container { gap: 1.5rem !important; }
             
-            .visualizer-container { margin-top: 0 !important; height: 22px !important; }
+            /* En pantallas ultra pequeñas quitamos el reflejo para ahorrar espacio */
+            .visualizer-container { -webkit-box-reflect: none; margin-top: 0 !important; height: 22px !important; }
             
             .mobile-break { display: block !important; }
         }
@@ -133,8 +139,8 @@
         <nav class="flex gap-2 md:gap-4 items-center">
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="appearance-none bg-none bg-surface-dim text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none transition-colors uppercase shadow-[2px_2px_0px_#000000]">
+                    <option value="vc.json">GTA Vice City</option> 
                     <option value="gta3.json">GTA III</option>
-                    <option value="vc.json">GTA Vice City</option>
                     <option value="gtasa.json">GTA San Andreas</option>
                     <option value="vcs.json">GTA Vice City Stories</option>
                     <!-- <option value="gta4.json">GTA IV</option> -->
@@ -169,32 +175,50 @@
             </button>
         </div>
 
-        <div class="visualizer-container mt-16 flex items-end justify-center gap-1 h-16 w-full max-w-lg px-6">
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] glow-neon-cyan transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-secondary-container h-[10%] transition-all duration-75"></div>
+        <!-- NUEVO: 40 Barras de ecualizador lineales con color primario -->
+        <div class="visualizer-container mt-12 flex items-end justify-center gap-[2px] h-16 w-full max-w-2xl px-6">
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+        
         </div>
     </main>
 
@@ -212,15 +236,13 @@
             
             <div id="volume-popup" class="absolute bottom-[calc(100%+15px)] left-1/2 -translate-x-1/2 bg-surface-dim border-2 border-primary hidden flex-col items-center p-2 shadow-[4px_4px_0px_#000000] z-50 h-auto w-12 md:w-14 transition-all">
                 <input type="range" orient="vertical" id="volume-slider" min="0" max="1" step="0.05" value="0.5" class="h-32 w-full mb-3 cursor-pointer">
-                
                 <button id="mute-btn" class="text-primary interactive-btn transition-colors flex items-center justify-center flex-shrink-0" title="Mute/Unmute">
                     <span id="vol-icon-popup" class="material-symbols-outlined text-xl md:text-2xl leading-none">volume_up</span>
                 </button>
             </div>
         </div>
         
-        <!-- === NUEVO: TEXTO DE VERSIÓN === -->
-        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">V0.8</span>
+        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.8</span>
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
