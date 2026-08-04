@@ -77,7 +77,7 @@
             transition: filter 0.5s ease;
         }
         .fm-text {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 900;
             font-style: italic;
             color: var(--theme-primary, #ffabf3);
@@ -86,7 +86,7 @@
             line-height: 1.2;
         }
         @media (min-width: 768px) {
-            .fm-text { font-size: 2.5rem; }
+            .fm-text { font-size: 1.9rem; }
         }
 
         .fm-text-container.tuning-mode {
@@ -133,12 +133,12 @@
         <nav class="flex gap-2 md:gap-4 items-center">
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="appearance-none bg-none bg-surface-dim text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none transition-colors uppercase shadow-[2px_2px_0px_#000000]">
-                    <option value="vc.json">Vice City</option>
                     <option value="gta3.json">GTA III</option>
-                    <option value="gtasa.json">San Andreas</option>
-                    <option value="vcs.json">Vice City Stories</option>
+                    <option value="vc.json">GTA Vice City</option>
+                    <option value="gtasa.json">GTA San Andreas</option>
+                    <option value="vcs.json">GTA Vice City Stories</option>
                     <!-- <option value="gta4.json">GTA IV</option> -->
-                    <!-- <option value="gtav.json">GTA V</option> -->
+                    <option value="gtav.json">GTA V</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
                     <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
