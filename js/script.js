@@ -1,105 +1,71 @@
-let stations = []; 
-
-const audioPlayer = document.getElementById('audio-player');
-audioPlayer.loop = true; 
-
-// Audios globales
-const staticAudio = new Audio('audio/estatica.mp3'); 
-staticAudio.loop = true; 
-const clickAudio = new Audio('audio/click.mp3'); 
-
-const toggleBtn = document.getElementById('toggle-btn');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const stationNameTop = document.getElementById('station-name-top');
-const carouselContainer = document.getElementById('carousel-container');
-const visualizerBars = document.querySelectorAll('.visualizer-bar');
-const themeSelector = document.getElementById('theme-selector');
-
-// Elementos del Volumen
-const volToggleBtn = document.getElementById('volume-toggle-btn');
-const volPopup = document.getElementById('volume-popup');
-const volSlider = document.getElementById('volume-slider');
-const muteBtn = document.getElementById('mute-btn');
-const volIconMain = document.getElementById('vol-icon-main');
-const volIconPopup = document.getElementById('vol-icon-popup');
-
-let currentStationIndex = 0;
-let isPlaying = false;
-let isTuning = false; 
-let radioTimeout; 
-
-let audioCtx;
-let analyser;
-let dataArray;
-let isVisualizerInitialized = false;
-
-// Estado del Volumen
-let currentVolume = 0.5;
-let isMuted = false;
-
-audioPlayer.volume = currentVolume;
-staticAudio.volume = 0;
+'use strict';
 
 // ==========================================
-// CONFIGURACIÓN DE TEMAS POR JUEGO
+// 1. ESTADO GLOBAL (STATE)
+// ==========================================
+const state = {
+    stations: [],
+    currentIndex: 0,
+    isPlaying: false,
+    isTuning: false,
+    volume: 0.5,
+    isMuted: false,
+    timeout: null,
+    isVisualizerInit: false
+};
+
+// ==========================================
+// 2. ELEMENTOS DEL DOM Y AUDIO
+// ==========================================
+const dom = {
+    audio: document.getElementById('audio-player'),
+    staticAudio: new Audio('audio/estatica.mp3'),
+    clickAudio: new Audio('audio/click.mp3'),
+    toggleBtn: document.getElementById('toggle-btn'),
+    prevBtn: document.getElementById('prev-btn'),
+    nextBtn: document.getElementById('next-btn'),
+    stationName: document.getElementById('station-name-top'),
+    carousel: document.getElementById('carousel-container'),
+    visualizerBars: document.querySelectorAll('.visualizer-bar'),
+    themeSelector: document.getElementById('theme-selector'),
+    // FIX: Corregido el nombre de la variable a volToggleBtn
+    volToggleBtn: document.getElementById('volume-toggle-btn'), 
+    volPopup: document.getElementById('volume-popup'),
+    volSlider: document.getElementById('volume-slider'),
+    muteBtn: document.getElementById('mute-btn'),
+    volIconMain: document.getElementById('vol-icon-main'),
+    volIconPopup: document.getElementById('vol-icon-popup'),
+    styleTag: document.getElementById('dynamic-theme') || document.createElement('style')
+};
+
+dom.audio.loop = true;
+dom.staticAudio.loop = true;
+dom.audio.volume = state.volume;
+dom.staticAudio.volume = 0;
+
+if (!document.getElementById('dynamic-theme')) {
+    dom.styleTag.id = 'dynamic-theme';
+    document.head.appendChild(dom.styleTag);
+}
+
+let audioCtx, analyser, dataArray;
+
+// ==========================================
+// 3. CONFIGURACIÓN DE TEMAS
 // ==========================================
 const gameThemes = {
-    'vc.json': { 
-        primary: '#ffabf3',    
-        secondary: '#00fbfb',  
-        bg: '#131313',
-        surface: '#523F4C',
-        footer: '#20201f'
-    },
-    'gta3.json': { 
-        primary: '#ffd700',    
-        secondary: '#9ca3af',  
-        bg: '#1a1f24',
-        surface: '#2a3239',
-        footer: '#11161b'
-    },
-    'gtasa.json': {
-        primary: '#c5cee9',    
-        secondary: '#ffffff',  
-        bg: '#010000',
-        surface: '#111111',
-        footer: '#0a0a0a'
-    },
-    'vcs.json': {
-        primary: '#14f0d8',    
-        secondary: '#f9fa99',  
-        bg: '#320049',
-        surface: '#4a006e',
-        footer: '#220033'
-    },
-    'gta4.json': { 
-        primary: '#d1d5db',    
-        secondary: '#8b8b83',  
-        bg: '#292524',
-        surface: '#3e3835',
-        footer: '#1f1c1a'
-    },
-    'gtav.json': { 
-        primary: '#5c9e31',    
-        secondary: '#ffffff',  
-        bg: '#0d0f0b',
-        surface: '#1c2417',
-        footer: '#0f140d'
-    }
+    'vc.json': { primary: '#ffabf3', secondary: '#00fbfb', bg: '#131313', surface: '#523F4C', footer: '#20201f' },
+    'gta3.json': { primary: '#ffd700', secondary: '#9ca3af', bg: '#1a1f24', surface: '#2a3239', footer: '#11161b' },
+    'gtasa.json': { primary: '#c5cee9', secondary: '#ffffff', bg: '#010000', surface: '#111111', footer: '#0a0a0a' },
+    'vcs.json': { primary: '#14f0d8', secondary: '#f9fa99', bg: '#320049', surface: '#4a006e', footer: '#220033' },
+    'gta4.json': { primary: '#d1d5db', secondary: '#8b8b83', bg: '#292524', surface: '#3e3835', footer: '#1f1c1a' },
+    'gtav.json': { primary: '#5c9e31', secondary: '#ffffff', bg: '#0d0f0b', surface: '#1c2417', footer: '#0f140d' }
 };
 
 function applyVisualTheme(jsonFile) {
     const theme = gameThemes[jsonFile] || gameThemes['vc.json'];
 
-    let styleTag = document.getElementById('dynamic-theme');
-    if (!styleTag) {
-        styleTag = document.createElement('style');
-        styleTag.id = 'dynamic-theme';
-        document.head.appendChild(styleTag);
-    }
-    
-    styleTag.innerHTML = `
+    dom.styleTag.innerHTML = `
         :root {
             --theme-primary: ${theme.primary};
             --theme-secondary: ${theme.secondary};
@@ -107,401 +73,295 @@ function applyVisualTheme(jsonFile) {
             --theme-surface: ${theme.surface};
             --theme-footer: ${theme.footer};
         }
-    
         .text-primary { color: var(--theme-primary) !important; }
         .bg-primary { background-color: var(--theme-primary) !important; }
         .border-primary { border-color: var(--theme-primary) !important; }
-        
         .text-secondary-container { color: var(--theme-secondary) !important; }
         .border-secondary-container { border-color: var(--theme-secondary) !important; }
         .bg-secondary-container { background-color: var(--theme-secondary) !important; }
-        
         .bg-surface-dim { background-color: var(--theme-surface) !important; }
         .text-surface-dim { color: var(--theme-surface) !important; }
         .border-surface-variant { border-color: var(--theme-surface) !important; }
-
-        .app-footer { 
-            background-color: var(--theme-footer) !important; 
-            border-top-color: var(--theme-primary) !important; 
-        }
-        
+        .app-footer { background-color: var(--theme-footer) !important; border-top-color: var(--theme-primary) !important; }
         .interactive-btn { cursor: pointer; }
         .interactive-btn:hover { filter: brightness(1.2); }
-        
-        .power-on-btn { 
-            background-color: var(--theme-secondary) !important; 
-            color: var(--theme-surface) !important; 
-            border-color: var(--theme-secondary) !important; 
-            box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; 
-        }
-        .power-off-btn { 
-            background-color: var(--theme-surface) !important; 
-            color: var(--theme-primary) !important; 
-            border-color: var(--theme-primary) !important; 
-        }
-
+        .power-on-btn { background-color: var(--theme-secondary) !important; color: var(--theme-surface) !important; border-color: var(--theme-secondary) !important; box-shadow: 0 0 20px var(--theme-secondary), inset 0 0 10px var(--theme-secondary) !important; }
+        .power-off-btn { background-color: var(--theme-surface) !important; color: var(--theme-primary) !important; border-color: var(--theme-primary) !important; }
         .glow-neon { box-shadow: 0 0 15px var(--theme-primary), inset 0 0 5px var(--theme-primary) !important; }
         .glow-neon-cyan { box-shadow: 0 0 15px var(--theme-secondary), inset 0 0 5px var(--theme-secondary) !important; }
-        
         .header-glow { filter: drop-shadow(0 0 10px var(--theme-primary)) !important; }
         .arrow-glow { filter: drop-shadow(0 0 8px var(--theme-primary)) !important; }
-        
         .bg-background, body { background-color: var(--theme-bg) !important; }
-        
         input[type=range][orient=vertical] { accent-color: var(--theme-secondary) !important; }
     `;
     
-    if (!isPlaying) {
-        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
+    if (!state.isPlaying) {
+        dom.toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
     }
 }
 
 // ==========================================
-// CONTROL DE VOLUMEN Y MUTE
+// 4. CONTROL DE VOLUMEN
 // ==========================================
 function updateVolumeIcons(vol) {
-    if (vol === 0 || isMuted) {
-        volIconMain.innerText = 'volume_off';
-        volIconPopup.innerText = 'volume_off';
-    } else if (vol < 0.5) {
-        volIconMain.innerText = 'volume_down';
-        volIconPopup.innerText = 'volume_down';
-    } else {
-        volIconMain.innerText = 'volume_up';
-        volIconPopup.innerText = 'volume_up';
-    }
+    const icon = (vol === 0 || state.isMuted) ? 'volume_off' : (vol < 0.5 ? 'volume_down' : 'volume_up');
+    dom.volIconMain.innerText = icon;
+    dom.volIconPopup.innerText = icon;
 }
 
 function applyVolume() {
-    const effectiveVol = isMuted ? 0 : currentVolume;
-    
-    if (isTuning) {
-        staticAudio.volume = effectiveVol * 0.8;
-    } else {
-        staticAudio.volume = 0;
-    }
-    
-    audioPlayer.volume = effectiveVol; 
+    const effectiveVol = state.isMuted ? 0 : state.volume;
+    dom.staticAudio.volume = state.isTuning ? (effectiveVol * 0.8) : 0;
+    dom.audio.volume = effectiveVol; 
     updateVolumeIcons(effectiveVol);
 }
 
-volToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (volPopup.classList.contains('hidden')) {
-        volPopup.classList.remove('hidden');
-        volPopup.classList.add('flex');
+function toggleVolumePopup(forceClose = false) {
+    const isHidden = dom.volPopup.classList.contains('hidden');
+    if (forceClose || !isHidden) {
+        dom.volPopup.classList.add('hidden');
+        dom.volPopup.classList.remove('flex');
     } else {
-        volPopup.classList.add('hidden');
-        volPopup.classList.remove('flex');
+        dom.volPopup.classList.remove('hidden');
+        dom.volPopup.classList.add('flex');
     }
-});
-
-document.addEventListener('click', (e) => {
-    if (!volPopup.contains(e.target) && !volToggleBtn.contains(e.target)) {
-        volPopup.classList.add('hidden');
-        volPopup.classList.remove('flex');
-    }
-});
-
-volPopup.addEventListener('click', (e) => {
-    e.stopPropagation();
-});
-
-volSlider.addEventListener('input', (e) => {
-    currentVolume = parseFloat(e.target.value);
-    if (currentVolume > 0) {
-        isMuted = false;
-    }
-    applyVolume();
-});
-
-muteBtn.addEventListener('click', () => {
-    isMuted = !isMuted;
-    if (isMuted) {
-        volSlider.value = 0;
-    } else {
-        volSlider.value = currentVolume === 0 ? 0.5 : currentVolume;
-        currentVolume = parseFloat(volSlider.value);
-    }
-    applyVolume();
-});
-
+}
 
 // ==========================================
-// ECUALIZADOR DINÁMICO TIPO PREMIERE PRO
+// 5. ECUALIZADOR (VISUALIZER) - ALTO RENDIMIENTO
 // ==========================================
 function initVisualizer() {
-    if (isVisualizerInitialized) return;
+    if (state.isVisualizerInit) return;
     
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
     
-    const source = audioCtx.createMediaElementSource(audioPlayer);
+    const source = audioCtx.createMediaElementSource(dom.audio);
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     
-    // Balance óptimo de resolución para evitar que se divida demasiado el sonido
-    analyser.fftSize = 1024; 
-    
-    // Suavizado elegante para las caídas de las barras
+    analyser.fftSize = 512; 
     analyser.smoothingTimeConstant = 0.8; 
-    
-    // TRUCO DE SATURACIÓN: Damos mucho espacio en los decibeles máximos
-    // para que la izquierda no se vea cuadrada y tenga picos precisos.
     analyser.minDecibels = -85;
     analyser.maxDecibels = -15; 
 
-    const bufferLength = analyser.frequencyBinCount;
-    dataArray = new Uint8Array(bufferLength);
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    state.isVisualizerInit = true;
     
-    isVisualizerInitialized = true;
     renderFrame();
 }
 
 function renderFrame() {
     requestAnimationFrame(renderFrame);
     
-    if (!isPlaying || isTuning) {
-        visualizerBars.forEach((bar) => bar.style.height = '4%');
+    const barsCount = dom.visualizerBars.length; 
+
+    if (!state.isPlaying || state.isTuning) {
+        for (let i = 0; i < barsCount; i++) {
+            dom.visualizerBars[i].style.height = '4%';
+        }
         return;
     }
 
     analyser.getByteFrequencyData(dataArray);
+    const dataLen = dataArray.length;
 
-    for (let i = 0; i < visualizerBars.length; i++) {
+    for (let i = 0; i < barsCount; i++) {
         let binIndex = Math.floor(i * 1.4) + 1; 
-        
-        if (binIndex >= dataArray.length) binIndex = dataArray.length - 1;
+        if (binIndex >= dataLen) binIndex = dataLen - 1;
 
         let value = dataArray[binIndex] || 0; 
         
-        // Si el archivo de audio cortó los agudos (valor menor a 15) en la parte derecha del visualizador, 
-        // inyectamos un poco de la energía de los instrumentos medios para que nunca se queden muertas.
+        // Fallback MP3 para agudos recortados
         if (i > 20 && value < 15) {
-            let fallbackBin = Math.floor(20 + ((i - 20) * 1));
-            value = (dataArray[fallbackBin] || 0) * 0.7; // Reducimos un poco para simular agudos
+            let fallbackBin = Math.floor(20 + ((i - 20) * 0.5));
+            value = (dataArray[fallbackBin] || 0) * 0.7; 
         }
 
-        let percent = (value / 255) * 130; 
-        
-        // ECUALIZADOR VISUAL: 
-        // Frenamos un poco la izquierda (graves) para evitar saturación visual, 
-        // y damos un pequeñísimo impulso a la derecha (agudos).
-        let boost = 0.8 + (i * 0.015); 
-        percent = percent * boost; 
+        let percent = (value / 255) * 100; 
+        let boost = 0.75 + (i * 0.025); 
+        percent *= boost; 
         
         if (percent < 4) percent = 4; 
-        if (percent > 100) percent = 100;
+        else if (percent > 100) percent = 100;
         
-        visualizerBars[i].style.height = percent + '%';
+        dom.visualizerBars[i].style.height = percent + '%';
     }
 }
 
 // ==========================================
-// INTERFAZ DE USUARIO
+// 6. LÓGICA DE INTERFAZ Y REPRODUCTOR
 // ==========================================
 function updateUI(direction = 'none') {
-    const fmTextContainer = document.querySelector('.fm-text-container');
+    const fmContainer = document.querySelector('.fm-text-container');
 
-    if (stations.length === 0) {
-        stationNameTop.classList.add('tuning-mode');
-        fmTextContainer.classList.add('tuning-mode');
-        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">NO SE ENCONTRARON</span> <span class="block md:inline mobile-break">ESTACIONES</span>`;
-        
-        carouselContainer.innerHTML = `
+    if (state.stations.length === 0) {
+        dom.stationName.classList.add('tuning-mode');
+        fmContainer.classList.add('tuning-mode');
+        dom.stationName.innerHTML = `<span class="block md:inline mobile-break">NO SE ENCONTRARON</span> <span class="block md:inline mobile-break">ESTACIONES</span>`;
+        dom.carousel.innerHTML = `
             <div class="scale-100 md:scale-110 z-10 relative opacity-60 filter grayscale transition-all duration-300">
                 <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
                     <span class="text-surface-variant font-headline-md text-xl md:text-2xl text-center">PRÓXIMAMENTE</span>
                 </div>
-            </div>
-        `;
+            </div>`;
         return;
     }
 
-    const currentStation = stations[currentStationIndex];
+    const currentStation = state.stations[state.currentIndex];
+    const total = state.stations.length;
     
-    if (isPlaying && isTuning) {
-        stationNameTop.classList.add('tuning-mode');
-        fmTextContainer.classList.add('tuning-mode');
-        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">SINTONIZANDO...</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
-    } else if (isPlaying && !isTuning) {
-        stationNameTop.classList.remove('tuning-mode');
-        fmTextContainer.classList.remove('tuning-mode');
-        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">ESTÁS ESCUCHANDO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
+    if (state.isPlaying && state.isTuning) {
+        dom.stationName.classList.add('tuning-mode');
+        fmContainer.classList.add('tuning-mode');
+        dom.stationName.innerHTML = `<span class="block md:inline mobile-break">SINTONIZANDO...</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
+    } else if (state.isPlaying && !state.isTuning) {
+        dom.stationName.classList.remove('tuning-mode');
+        fmContainer.classList.remove('tuning-mode');
+        dom.stationName.innerHTML = `<span class="block md:inline mobile-break">ESTÁS ESCUCHANDO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
     } else {
-        stationNameTop.classList.remove('tuning-mode');
-        fmTextContainer.classList.remove('tuning-mode');
-        stationNameTop.innerHTML = `<span class="block md:inline mobile-break">APAGADO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
+        dom.stationName.classList.remove('tuning-mode');
+        fmContainer.classList.remove('tuning-mode');
+        dom.stationName.innerHTML = `<span class="block md:inline mobile-break">APAGADO:</span> <span class="block md:inline mobile-break">${currentStation.name}</span>`;
     }
 
-    const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
-    const nextIndex = (currentStationIndex + 1) % stations.length;
+    const prevIndex = (state.currentIndex - 1 + total) % total;
+    const nextIndex = (state.currentIndex + 1) % total;
 
-    let centralStationHTML = '';
+    let centralHTML = '';
     
-    if (isPlaying && !isTuning) {
-        centralStationHTML = `
+    if (state.isPlaying && !state.isTuning) {
+        centralHTML = `
         <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
             <div class="arrow-glow absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">▶</div>
             <div class="arrow-glow absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-primary blink text-2xl md:text-3xl z-20">◀</div>
             <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-primary bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] glow-neon transition-colors duration-300">
-                <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
+                <img src="${state.stations[state.currentIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
-        </div>
-        `;
-    } else if (isPlaying && isTuning) {
-        centralStationHTML = `
+        </div>`;
+    } else if (state.isPlaying && state.isTuning) {
+        centralHTML = `
         <div class="scale-100 md:scale-110 z-10 relative transition-all duration-300">
             <div class="absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 text-white/40 animate-pulse text-2xl md:text-3xl z-20">▶</div>
             <div class="absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 text-white/40 animate-pulse text-2xl md:text-3xl z-20">◀</div>
             <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-gray-400 bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] grayscale animate-pulse transition-colors duration-300">
-                <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-60">
+                <img src="${state.stations[state.currentIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-60">
             </div>
-        </div>
-        `;
+        </div>`;
     } else {
-        centralStationHTML = `
+        centralHTML = `
         <div class="scale-100 md:scale-110 z-10 relative opacity-60 filter grayscale transition-all duration-300">
             <div class="cover-active relative z-10 w-52 h-52 md:w-80 md:h-80 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-4 md:p-8 shadow-[8px_8px_0px_#000000] transition-colors duration-300">
-                <img src="${stations[currentStationIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-70">
+                <img src="${state.stations[state.currentIndex].logo}" class="w-full h-full object-contain drop-shadow-md opacity-70">
             </div>
-        </div>
-        `;
+        </div>`;
     }
 
-    carouselContainer.innerHTML = `
+    dom.carousel.innerHTML = `
         <div class="opacity-40 scale-75 filter grayscale">
             <div class="cover-inactive w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
-                <img src="${stations[prevIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
+                <img src="${state.stations[prevIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
         </div>
-        
-        ${centralStationHTML}
-
+        ${centralHTML}
         <div class="opacity-40 scale-75 filter grayscale">
             <div class="cover-inactive w-40 h-40 md:w-64 md:h-64 border-4 border-surface-variant bg-surface-dim -skew-x-3 flex items-center justify-center p-3 md:p-6 shadow-[8px_8px_0px_#000000]">
-                <img src="${stations[nextIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
+                <img src="${state.stations[nextIndex].logo}" class="w-full h-full object-contain drop-shadow-md">
             </div>
         </div>
     `;
 
-    carouselContainer.classList.remove('slide-next', 'slide-prev');
-    void carouselContainer.offsetWidth; 
-    
-    if (direction === 'next') {
-        carouselContainer.classList.add('slide-next');
-    } else if (direction === 'prev') {
-        carouselContainer.classList.add('slide-prev');
+    dom.carousel.classList.remove('slide-next', 'slide-prev');
+    void dom.carousel.offsetWidth; 
+    if (direction !== 'none') {
+        dom.carousel.classList.add(`slide-${direction}`);
     }
 }
 
-audioPlayer.addEventListener('playing', () => {
-    isTuning = false;
-    staticAudio.pause();
-    staticAudio.volume = 0; 
-    applyVolume();
-    updateUI('none');
-});
-
 function playRadio() {
-    if (!isPlaying) return; 
-    clearTimeout(radioTimeout);
+    if (!state.isPlaying) return; 
+    clearTimeout(state.timeout);
 
-    isTuning = true;
+    state.isTuning = true;
     applyVolume(); 
     
-    audioPlayer.pause();
+    dom.audio.pause();
     
-    if (staticAudio.paused) {
-        staticAudio.play().catch(e => console.log("Auto-play bloqueado:", e));
+    if (dom.staticAudio.paused) {
+        dom.staticAudio.play().catch(e => console.log("Auto-play bloqueado:", e));
     }
 
-    radioTimeout = setTimeout(() => {
-        if (!isPlaying) return; 
+    state.timeout = setTimeout(() => {
+        if (!state.isPlaying) return; 
 
-        const station = stations[currentStationIndex];
-        
-        audioPlayer.src = station.url;
-        audioPlayer.volume = 0; 
+        const station = state.stations[state.currentIndex];
+        dom.audio.src = station.url;
+        dom.audio.volume = 0; 
 
-        audioPlayer.onloadedmetadata = () => {
+        dom.audio.onloadedmetadata = () => {
             const now = Math.floor(Date.now() / 1000);
-            const currentSecond = now % station.duration;
-            audioPlayer.currentTime = currentSecond;
-            audioPlayer.play().catch(error => console.error("Error al reproducir:", error));
+            dom.audio.currentTime = now % station.duration;
+            dom.audio.play().catch(e => console.error("Error al reproducir:", e));
         };
-
     }, 800); 
 }
 
 function togglePower() {
-    if (stations.length === 0) return; 
+    if (state.stations.length === 0) return; 
 
     initVisualizer();
-    isPlaying = !isPlaying;
+    state.isPlaying = !state.isPlaying;
 
-    if (isPlaying) {
-        isTuning = true; 
-        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-on-btn";
+    if (state.isPlaying) {
+        state.isTuning = true; 
+        dom.toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-on-btn";
         
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         updateUI('none');
         playRadio();
     } else {
-        isTuning = false;
-        toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
-        clearTimeout(radioTimeout);
-        audioPlayer.pause();
-        audioPlayer.src = ""; 
-        staticAudio.pause();
+        state.isTuning = false;
+        dom.toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
+        clearTimeout(state.timeout);
+        dom.audio.pause();
+        dom.audio.src = ""; 
+        dom.staticAudio.pause();
         updateUI('none');
     }
 }
 
 function changeStation(direction) {
-    if (stations.length === 0) return;
+    if (state.stations.length === 0) return;
 
-    clickAudio.currentTime = 0; 
-    clickAudio.play().catch(e => console.log("Sonido bloqueado", e));
+    dom.clickAudio.currentTime = 0; 
+    dom.clickAudio.play().catch(e => console.log("Sonido bloqueado", e));
 
-    if (direction === 'next') {
-        currentStationIndex = (currentStationIndex + 1) % stations.length;
-    } else {
-        currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
-    }
+    const total = state.stations.length;
+    state.currentIndex = direction === 'next' 
+        ? (state.currentIndex + 1) % total 
+        : (state.currentIndex - 1 + total) % total;
     
-    if (isPlaying) {
-        isTuning = true; 
-    }
+    if (state.isPlaying) state.isTuning = true; 
     
     updateUI(direction); 
-    if (isPlaying) playRadio(); 
+    if (state.isPlaying) playRadio(); 
 }
 
 async function loadStations(jsonFile) {
     try {
         applyVisualTheme(jsonFile);
-
-        const response = await fetch('data/' + jsonFile);
-        
-        if (!response.ok) {
-            throw new Error(`Archivo no existe o falla en red.`);
-        }
+        const response = await fetch(`data/${jsonFile}`);
+        if (!response.ok) throw new Error(`Archivo no existe o falla en red.`);
         
         const fetchedData = await response.json();
-        
-        if (fetchedData.length === 0) {
-            throw new Error(`El archivo JSON está vacío.`);
-        }
+        if (fetchedData.length === 0) throw new Error(`El archivo JSON está vacío.`);
 
-        stations = fetchedData;
-        currentStationIndex = 0;
+        state.stations = fetchedData;
+        state.currentIndex = 0;
         
-        if (isPlaying) {
-            isTuning = true; 
+        if (state.isPlaying) {
+            state.isTuning = true; 
             updateUI('none');
             playRadio();
         } else {
@@ -509,29 +369,55 @@ async function loadStations(jsonFile) {
         }
 
     } catch (error) {
-        console.warn(`Aviso: ${jsonFile} no tiene estaciones cargadas o no existe aún.`);
-        
-        if (isPlaying) {
-            isPlaying = false;
-            isTuning = false;
-            toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
-            clearTimeout(radioTimeout);
-            audioPlayer.pause();
-            audioPlayer.src = ""; 
-            staticAudio.pause();
+        console.warn(`Aviso: ${jsonFile} no cargó. Detalle:`, error);
+        if (state.isPlaying) {
+            state.isPlaying = false;
+            state.isTuning = false;
+            dom.toggleBtn.className = "interactive-btn flex flex-col items-center justify-center -skew-x-3 p-1.5 md:p-3 min-w-[65px] md:min-w-[80px] text-xs md:text-base shadow-[4px_4px_0px_#000000] transition-all power-off-btn";
+            clearTimeout(state.timeout);
+            dom.audio.pause();
+            dom.audio.src = ""; 
+            dom.staticAudio.pause();
         }
-        
-        stations = [];
+        state.stations = [];
         updateUI('none');
     }
 }
 
-themeSelector.addEventListener('change', (e) => {
-    loadStations(e.target.value);
+// ==========================================
+// 7. LISTENERS DE EVENTOS
+// ==========================================
+dom.audio.addEventListener('playing', () => {
+    state.isTuning = false;
+    dom.staticAudio.pause();
+    dom.staticAudio.volume = 0; 
+    applyVolume();
+    updateUI('none');
 });
 
-toggleBtn.addEventListener('click', togglePower);
-nextBtn.addEventListener('click', () => changeStation('next'));
-prevBtn.addEventListener('click', () => changeStation('prev'));
+dom.volToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleVolumePopup(); });
+dom.volPopup.addEventListener('click', (e) => e.stopPropagation());
+document.addEventListener('click', (e) => {
+    if (!dom.volPopup.contains(e.target) && !dom.volToggleBtn.contains(e.target)) toggleVolumePopup(true);
+});
 
-loadStations(themeSelector.value);
+dom.volSlider.addEventListener('input', (e) => {
+    state.volume = parseFloat(e.target.value);
+    if (state.volume > 0) state.isMuted = false;
+    applyVolume();
+});
+
+dom.muteBtn.addEventListener('click', () => {
+    state.isMuted = !state.isMuted;
+    dom.volSlider.value = state.isMuted ? 0 : (state.volume === 0 ? 0.5 : state.volume);
+    state.volume = parseFloat(dom.volSlider.value);
+    applyVolume();
+});
+
+dom.themeSelector.addEventListener('change', (e) => loadStations(e.target.value));
+dom.toggleBtn.addEventListener('click', togglePower);
+dom.nextBtn.addEventListener('click', () => changeStation('next'));
+dom.prevBtn.addEventListener('click', () => changeStation('prev'));
+
+// Inicialización de arranque
+loadStations(dom.themeSelector.value);

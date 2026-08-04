@@ -96,7 +96,6 @@
             color: #9ca3af !important;
         }
 
-        /* NUEVO: Reflejo en el suelo idéntico a la referencia */
         .visualizer-container {
             -webkit-box-reflect: below 2px linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.5) 100%);
         }
@@ -121,7 +120,6 @@
             .arrow-icon { font-size: 1.5rem !important; }
             #carousel-container { gap: 1.5rem !important; }
             
-            /* En pantallas ultra pequeñas quitamos el reflejo para ahorrar espacio */
             .visualizer-container { -webkit-box-reflect: none; margin-top: 0 !important; height: 22px !important; }
             
             .mobile-break { display: block !important; }
@@ -140,10 +138,10 @@
             <div class="relative -skew-x-3">
                 <select id="theme-selector" class="appearance-none bg-none bg-surface-dim text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none transition-colors uppercase shadow-[2px_2px_0px_#000000]">
                     <option value="gta3.json">GTA III</option>
-                    <option value="vc.json">GTA Vice City</option> 
+                    <option value="vc.json">GTA Vice City</option>      
                     <option value="gtasa.json">GTA San Andreas</option>
                     <option value="vcs.json">GTA Vice City Stories</option>
-                    <!-- <option value="gta4.json">GTA IV</option> -->
+                    <option value="gta4.json">GTA IV</option>
                     <option value="gtav.json">GTA V</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
@@ -175,8 +173,17 @@
             </button>
         </div>
 
-        <!-- NUEVO: 40 Barras de ecualizador lineales con color primario -->
+        <!-- ECUALIZADOR RESPONSIVE: 40 BARRAS (28 VISIBLES EN MÓVILES) -->
         <div class="visualizer-container mt-12 flex items-end justify-center gap-[2px] h-16 w-full max-w-2xl px-6">
+            <!-- 6 Exteriores Izquierdas (Ocultas en móviles) -->
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            
+            <!-- 28 Interiores (Visibles siempre) -->
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
@@ -205,20 +212,14 @@
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-            <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
-        
+
+            <!-- 6 Exteriores Derechas (Ocultas en móviles) -->
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
+            <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
         </div>
     </main>
 
@@ -242,7 +243,7 @@
             </div>
         </div>
         
-        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.8</span>
+        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.1</span>
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
