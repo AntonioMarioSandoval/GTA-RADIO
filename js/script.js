@@ -413,7 +413,10 @@ dom.muteBtn.addEventListener('click', () => {
     applyVolume();
 });
 
-dom.themeSelector.addEventListener('change', (e) => loadStations(e.target.value));
+dom.themeSelector.addEventListener('change', (e) => {
+    loadStations(e.target.value);
+    dom.themeSelector.blur(); // Quita el foco para que funcionen las flechas del teclado de nuevo
+});
 dom.toggleBtn.addEventListener('click', togglePower);
 dom.nextBtn.addEventListener('click', () => changeStation('next'));
 dom.prevBtn.addEventListener('click', () => changeStation('prev'));
@@ -426,21 +429,18 @@ let touchStartX = 0;
 let touchEndX = 0;
 
 function handleSwipe() {
-    const swipeThreshold = 50; // Distancia mínima en píxeles para ser considerado un deslizamiento intencional
+    const swipeThreshold = 50; 
     const diff = touchEndX - touchStartX;
 
     if (Math.abs(diff) > swipeThreshold) {
         if (diff < 0) {
-            // El usuario deslizó hacia la izquierda
             changeStation('next');
         } else {
-            // El usuario deslizó hacia la derecha
             changeStation('prev');
         }
     }
 }
 
-// Capturamos los eventos únicamente en el contenedor central para evitar que los gestos se crucen con el volumen
 dom.mainContainer.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
 }, { passive: true });
@@ -449,6 +449,57 @@ dom.mainContainer.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
     handleSwipe();
 }, { passive: true });
+
+
+// ==========================================
+// 9. NAVEGACIÓN POR TECLADO (PC)
+// ==========================================
+document.addEventListener('keydown', (e) => {
+    // Si el usuario está usando el selector de temas o el control de volumen, no interrumpimos
+    if (document.activeElement === dom.themeSelector || document.activeElement === dom.volSlider) {
+        // Solo capturamos la "M" para mutear si no afecta a lo que está haciendo
+        if (e.key === 'm' || e.key === 'M') {
+            e.preventDefault();
+            dom.muteBtn.click();
+        }
+        return;
+    }
+
+    switch(e.key) {
+        case 'ArrowLeft':
+            e.preventDefault();
+            changeStation('prev');
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            changeStation('next');
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            state.volume = Math.min(1, state.volume + 0.05);
+            dom.volSlider.value = state.volume;
+            if (state.volume > 0) state.isMuted = false;
+            applyVolume();
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            state.volume = Math.max(0, state.volume - 0.05);
+            dom.volSlider.value = state.volume;
+            if (state.volume === 0) state.isMuted = true;
+            applyVolume();
+            break;
+        case 'm':
+        case 'M':
+            e.preventDefault();
+            dom.muteBtn.click();
+            break;
+        case ' ': // Barra espaciadora
+        case 'Enter':
+            e.preventDefault();
+            togglePower();
+            break;
+    }
+});
 
 // Inicialización de arranque
 loadStations(dom.themeSelector.value);
