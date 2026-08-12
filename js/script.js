@@ -26,9 +26,9 @@ const dom = {
     nextBtn: document.getElementById('next-btn'),
     stationName: document.getElementById('station-name-top'),
     carousel: document.getElementById('carousel-container'),
+    mainContainer: document.querySelector('.main-container'),
     visualizerBars: document.querySelectorAll('.visualizer-bar'),
     themeSelector: document.getElementById('theme-selector'),
-    // FIX: Corregido el nombre de la variable a volToggleBtn
     volToggleBtn: document.getElementById('volume-toggle-btn'), 
     volPopup: document.getElementById('volume-popup'),
     volSlider: document.getElementById('volume-slider'),
@@ -173,7 +173,6 @@ function renderFrame() {
 
         let value = dataArray[binIndex] || 0; 
         
-        // Fallback MP3 para agudos recortados
         if (i > 20 && value < 15) {
             let fallbackBin = Math.floor(20 + ((i - 20) * 0.5));
             value = (dataArray[fallbackBin] || 0) * 0.7; 
@@ -385,7 +384,7 @@ async function loadStations(jsonFile) {
 }
 
 // ==========================================
-// 7. LISTENERS DE EVENTOS
+// 7. LISTENERS DE EVENTOS CLÁSICOS
 // ==========================================
 dom.audio.addEventListener('playing', () => {
     state.isTuning = false;
@@ -418,6 +417,38 @@ dom.themeSelector.addEventListener('change', (e) => loadStations(e.target.value)
 dom.toggleBtn.addEventListener('click', togglePower);
 dom.nextBtn.addEventListener('click', () => changeStation('next'));
 dom.prevBtn.addEventListener('click', () => changeStation('prev'));
+
+
+// ==========================================
+// 8. GESTOS TÁCTILES (SWIPE PARA MÓVILES)
+// ==========================================
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleSwipe() {
+    const swipeThreshold = 50; // Distancia mínima en píxeles para ser considerado un deslizamiento intencional
+    const diff = touchEndX - touchStartX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff < 0) {
+            // El usuario deslizó hacia la izquierda
+            changeStation('next');
+        } else {
+            // El usuario deslizó hacia la derecha
+            changeStation('prev');
+        }
+    }
+}
+
+// Capturamos los eventos únicamente en el contenedor central para evitar que los gestos se crucen con el volumen
+dom.mainContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+dom.mainContainer.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, { passive: true });
 
 // Inicialización de arranque
 loadStations(dom.themeSelector.value);

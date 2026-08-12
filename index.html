@@ -77,7 +77,7 @@
             transition: filter 0.5s ease;
         }
         .fm-text {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 900;
             font-style: italic;
             color: var(--theme-primary, #ffabf3);
@@ -151,7 +151,8 @@
         </nav>
     </header>
 
-    <main class="main-container flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
+    <!-- FIX: Agregado touch-pan-y para bloquear el deslizamiento del historial en navegadores móviles -->
+    <main class="main-container touch-pan-y flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
         
         <div class="station-header mb-8 md:mb-12 flex flex-col items-center justify-end fm-text-container text-center px-4 min-h-[65px] md:min-h-[100px]">
             <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3 text-center">
@@ -173,9 +174,7 @@
             </button>
         </div>
 
-        <!-- ECUALIZADOR RESPONSIVE: 40 BARRAS (28 VISIBLES EN MÓVILES) -->
         <div class="visualizer-container mt-12 flex items-end justify-center gap-[2px] h-16 w-full max-w-2xl px-6">
-            <!-- 6 Exteriores Izquierdas (Ocultas en móviles) -->
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
@@ -183,7 +182,6 @@
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             
-            <!-- 28 Interiores (Visibles siempre) -->
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
@@ -213,7 +211,6 @@
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
 
-            <!-- 6 Exteriores Derechas (Ocultas en móviles) -->
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
             <div class="visualizer-bar hidden md:block w-1.5 md:w-2 bg-primary h-[5%] transition-all duration-75 glow-neon rounded-t-[1px]"></div>
@@ -243,7 +240,7 @@
             </div>
         </div>
         
-        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.85</span>
+        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.90</span>
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
