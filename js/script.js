@@ -11,7 +11,8 @@ const state = {
     volume: 0.5,
     isMuted: false,
     timeout: null,
-    isVisualizerInit: false
+    isVisualizerInit: false,
+    osdTimeout: null 
 };
 
 // ==========================================
@@ -28,14 +29,18 @@ const dom = {
     carousel: document.getElementById('carousel-container'),
     mainContainer: document.querySelector('.main-container'),
     visualizerBars: document.querySelectorAll('.visualizer-bar'),
-    themeSelector: document.getElementById('theme-selector'),
+    themeChips: document.querySelectorAll('.theme-chip'), 
     volToggleBtn: document.getElementById('volume-toggle-btn'), 
     volPopup: document.getElementById('volume-popup'),
     volSlider: document.getElementById('volume-slider'),
     muteBtn: document.getElementById('mute-btn'),
     volIconMain: document.getElementById('vol-icon-main'),
     volIconPopup: document.getElementById('vol-icon-popup'),
-    styleTag: document.getElementById('dynamic-theme') || document.createElement('style')
+    styleTag: document.getElementById('dynamic-theme') || document.createElement('style'),
+    osdVolume: document.getElementById('osd-volume'),
+    osdIcon: document.getElementById('osd-icon'),
+    osdProgress: document.getElementById('osd-progress'),
+    osdText: document.getElementById('osd-text')
 };
 
 dom.audio.loop = true;
@@ -54,16 +59,16 @@ let audioCtx, analyser, dataArray;
 // 3. CONFIGURACIÓN DE TEMAS
 // ==========================================
 const gameThemes = {
-    'vc.json': { primary: '#ffabf3', secondary: '#00fbfb', bg: '#131313', surface: '#523F4C', footer: '#20201f' },
     'gta3.json': { primary: '#ffd700', secondary: '#9ca3af', bg: '#1a1f24', surface: '#2a3239', footer: '#11161b' },
+    'gta4.json': { primary: '#d1d5db', secondary: '#8b8b83', bg: '#292524', surface: '#3e3835', footer: '#1f1c1a' },
+    'vc.json': { primary: '#ffabf3', secondary: '#00fbfb', bg: '#131313', surface: '#523F4C', footer: '#20201f' },
     'gtasa.json': { primary: '#c5cee9', secondary: '#ffffff', bg: '#010000', surface: '#111111', footer: '#0a0a0a' },
     'vcs.json': { primary: '#14f0d8', secondary: '#f9fa99', bg: '#320049', surface: '#4a006e', footer: '#220033' },
-    'gta4.json': { primary: '#d1d5db', secondary: '#8b8b83', bg: '#292524', surface: '#3e3835', footer: '#1f1c1a' },
     'gtav.json': { primary: '#5c9e31', secondary: '#ffffff', bg: '#0d0f0b', surface: '#1c2417', footer: '#0f140d' }
 };
 
 function applyVisualTheme(jsonFile) {
-    const theme = gameThemes[jsonFile] || gameThemes['vc.json'];
+    const theme = gameThemes[jsonFile] || gameThemes['gta3.json'];
 
     dom.styleTag.innerHTML = `
         :root {
@@ -101,12 +106,13 @@ function applyVisualTheme(jsonFile) {
 }
 
 // ==========================================
-// 4. CONTROL DE VOLUMEN
+// 4. CONTROL DE VOLUMEN (CON OSD ANIMADO)
 // ==========================================
 function updateVolumeIcons(vol) {
     const icon = (vol === 0 || state.isMuted) ? 'volume_off' : (vol < 0.5 ? 'volume_down' : 'volume_up');
     dom.volIconMain.innerText = icon;
     dom.volIconPopup.innerText = icon;
+    dom.osdIcon.innerText = icon; 
 }
 
 function applyVolume() {
@@ -114,6 +120,23 @@ function applyVolume() {
     dom.staticAudio.volume = state.isTuning ? (effectiveVol * 0.8) : 0;
     dom.audio.volume = effectiveVol; 
     updateVolumeIcons(effectiveVol);
+}
+
+function showVolumeOSD() {
+    const effectiveVol = state.isMuted ? 0 : state.volume;
+    const volPercent = Math.round(effectiveVol * 100);
+    
+    dom.osdProgress.style.width = `${volPercent}%`;
+    dom.osdText.innerText = volPercent;
+
+    dom.osdVolume.classList.remove('opacity-0');
+    dom.osdVolume.classList.add('opacity-100');
+
+    clearTimeout(state.osdTimeout);
+    state.osdTimeout = setTimeout(() => {
+        dom.osdVolume.classList.remove('opacity-100');
+        dom.osdVolume.classList.add('opacity-0');
+    }, 2000);
 }
 
 function toggleVolumePopup(forceClose = false) {
@@ -384,7 +407,7 @@ async function loadStations(jsonFile) {
 }
 
 // ==========================================
-// 7. LISTENERS DE EVENTOS CLÁSICOS
+// 7. LISTENERS DE EVENTOS Y CHIPS
 // ==========================================
 dom.audio.addEventListener('playing', () => {
     state.isTuning = false;
@@ -404,6 +427,7 @@ dom.volSlider.addEventListener('input', (e) => {
     state.volume = parseFloat(e.target.value);
     if (state.volume > 0) state.isMuted = false;
     applyVolume();
+    showVolumeOSD();
 });
 
 dom.muteBtn.addEventListener('click', () => {
@@ -411,12 +435,27 @@ dom.muteBtn.addEventListener('click', () => {
     dom.volSlider.value = state.isMuted ? 0 : (state.volume === 0 ? 0.5 : state.volume);
     state.volume = parseFloat(dom.volSlider.value);
     applyVolume();
+    showVolumeOSD();
 });
 
-dom.themeSelector.addEventListener('change', (e) => {
-    loadStations(e.target.value);
-    dom.themeSelector.blur(); // Quita el foco para que funcionen las flechas del teclado de nuevo
+dom.themeChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        const file = chip.dataset.theme;
+        
+        dom.themeChips.forEach(c => {
+            c.classList.remove('bg-primary', 'text-black', 'active');
+            c.classList.add('bg-surface-dim', 'text-primary');
+        });
+        chip.classList.remove('bg-surface-dim', 'text-primary');
+        chip.classList.add('bg-primary', 'text-black', 'active');
+        
+        chip.blur(); 
+        chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        loadStations(file);
+    });
 });
+
 dom.toggleBtn.addEventListener('click', togglePower);
 dom.nextBtn.addEventListener('click', () => changeStation('next'));
 dom.prevBtn.addEventListener('click', () => changeStation('prev'));
@@ -452,15 +491,23 @@ dom.mainContainer.addEventListener('touchend', (e) => {
 
 
 // ==========================================
-// 9. NAVEGACIÓN POR TECLADO (PC)
+// 9. NAVEGACIÓN POR TECLADO (PC) Y OSD ANIMADO
 // ==========================================
 document.addEventListener('keydown', (e) => {
-    // Si el usuario está usando el selector de temas o el control de volumen, no interrumpimos
-    if (document.activeElement === dom.themeSelector || document.activeElement === dom.volSlider) {
-        // Solo capturamos la "M" para mutear si no afecta a lo que está haciendo
+    if (document.activeElement === dom.volSlider) {
         if (e.key === 'm' || e.key === 'M') {
             e.preventDefault();
             dom.muteBtn.click();
+        }
+        return;
+    }
+
+    // NUEVO: Selección de tema con números (1 al 6)
+    if (e.key >= '1' && e.key <= '6') {
+        e.preventDefault();
+        const chipIndex = parseInt(e.key) - 1;
+        if (dom.themeChips[chipIndex]) {
+            dom.themeChips[chipIndex].click(); 
         }
         return;
     }
@@ -480,6 +527,7 @@ document.addEventListener('keydown', (e) => {
             dom.volSlider.value = state.volume;
             if (state.volume > 0) state.isMuted = false;
             applyVolume();
+            showVolumeOSD();
             break;
         case 'ArrowDown':
             e.preventDefault();
@@ -487,13 +535,14 @@ document.addEventListener('keydown', (e) => {
             dom.volSlider.value = state.volume;
             if (state.volume === 0) state.isMuted = true;
             applyVolume();
+            showVolumeOSD();
             break;
         case 'm':
         case 'M':
             e.preventDefault();
             dom.muteBtn.click();
             break;
-        case ' ': // Barra espaciadora
+        case ' ':
         case 'Enter':
             e.preventDefault();
             togglePower();
@@ -501,5 +550,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Inicialización de arranque
-loadStations(dom.themeSelector.value);
+// ==========================================
+// 10. INICIALIZACIÓN DE ARRANQUE
+// ==========================================
+const activeChip = document.querySelector('.theme-chip.active') || dom.themeChips[0];
+loadStations(activeChip.dataset.theme);

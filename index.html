@@ -15,15 +15,15 @@
             theme: {
                 extend: {
                     "colors": {
-                        "primary": "#ffabf3",
+                        "primary": "#ffd700",
                         "secondary": "#ffffff",
-                        "secondary-container": "#00fbfb",
-                        "surface-dim": "#523F4C",
+                        "secondary-container": "#9ca3af",
+                        "surface-dim": "#2a3239",
                         "surface-variant": "#353535",
-                        "surface-container": "#20201f",
-                        "background": "#131313",
+                        "surface-container": "#11161b",
+                        "background": "#1a1f24",
                         "on-background": "#e5e2e1",
-                        "on-primary": "#5b005b",
+                        "on-primary": "#000000",
                     },
                     "fontFamily": {
                         "label-md": ["Space Mono"],
@@ -73,14 +73,14 @@
         }
 
         .fm-text-container {
-            filter: drop-shadow(0 0 12px var(--theme-primary, #ffabf3));
+            filter: drop-shadow(0 0 12px var(--theme-primary, #ffd700));
             transition: filter 0.5s ease;
         }
         .fm-text {
             font-size: 1rem;
             font-weight: 900;
             font-style: italic;
-            color: var(--theme-primary, #ffabf3);
+            color: var(--theme-primary, #ffd700);
             transition: color 0.5s ease;
             text-align: center;
             line-height: 1.2;
@@ -100,10 +100,19 @@
             -webkit-box-reflect: below 2px linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.5) 100%);
         }
 
+        /* Ocultar scrollbars nativas pero permitir scroll en el carrusel */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Máscaras dinámicas para el carrusel de chips */
+        .fade-mask-left { background: linear-gradient(to right, var(--theme-bg, #1a1f24) 0%, transparent 100%) !important; }
+        .fade-mask-right { background: linear-gradient(to left, var(--theme-bg, #1a1f24) 0%, transparent 100%) !important; }
+
         @media (max-height: 500px) and (orientation: landscape) {
-            .app-header { padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; }
-            .app-header > div:first-child { font-size: 1.1rem !important; } 
-            .app-header a, .app-header select { padding: 4px 12px !important; font-size: 0.75rem !important; }
+            .app-header { flex-direction: row !important; padding-top: 4px !important; padding-bottom: 4px !important; border-bottom-width: 2px !important; gap: 8px !important; }
+            .app-header > div:first-child { font-size: 1rem !important; } 
+            
+            .theme-chip { font-size: 0.65rem !important; padding: 2px 10px !important; }
             
             .app-footer { padding-top: 4px !important; padding-bottom: 4px !important; border-top-width: 2px !important; }
             .app-footer > button, .app-footer > div { padding: 4px 12px !important; min-width: auto !important; font-size: 0.7rem !important; line-height: 1 !important; }
@@ -113,7 +122,7 @@
             
             .station-header { margin-bottom: 0 !important; margin-top: 0 !important; min-height: 50px !important; justify-content: flex-end !important; }
             .fm-text { font-size: 1.1rem !important; }
-            .fm-text-container { filter: drop-shadow(0 0 8px var(--theme-primary, #ffabf3)) !important; }
+            .fm-text-container { filter: drop-shadow(0 0 8px var(--theme-primary, #ffd700)) !important; }
             
             .cover-active { width: 115px !important; height: 115px !important; padding: 4px !important; border-width: 3px !important; }
             .cover-inactive { width: 75px !important; height: 75px !important; padding: 4px !important; border-width: 3px !important; }
@@ -129,30 +138,38 @@
 <body class="bg-background text-on-background tv-static min-h-screen overflow-hidden flex flex-col font-label-md transition-colors duration-500">
     <div class="scanlines"></div>
 
-    <header class="app-header header-glow flex fixed top-0 left-0 w-full z-50 justify-between items-center px-3 md:px-8 py-3 md:py-4 bg-background border-b-4 border-primary transition-colors duration-500">
-        <div id="main-title" class="font-headline-md text-base md:text-3xl text-primary italic tracking-tighter -skew-x-3 transition-colors duration-500">
+    <header class="app-header header-glow flex flex-col md:flex-row fixed top-0 left-0 w-full z-50 justify-between items-center px-2 md:px-8 py-2 md:py-4 bg-background border-b-4 border-primary transition-colors duration-500 gap-2 md:gap-4">
+        <div id="main-title" class="font-headline-md text-xl md:text-3xl text-primary italic tracking-tighter -skew-x-3 transition-colors duration-500 flex-shrink-0">
             GTA RADIO
         </div>
         
-        <nav class="flex gap-2 md:gap-4 items-center">
-            <div class="relative -skew-x-3">
-                <select id="theme-selector" class="appearance-none bg-none bg-surface-dim text-primary border-2 border-primary px-3 md:px-8 py-0.5 md:py-1 text-[10px] md:text-base font-label-md cursor-pointer outline-none transition-colors uppercase shadow-[2px_2px_0px_#000000]">
-                    <option value="gta3.json">GTA III</option>
-                    <option value="vc.json">GTA Vice City</option>      
-                    <option value="gtasa.json">GTA San Andreas</option>
-                    <option value="vcs.json">GTA Vice City Stories</option>
-                    <option value="gta4.json">GTA IV</option>
-                    <option value="gtav.json">GTA V</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 md:px-2 text-primary">
-                    <span class="material-symbols-outlined text-[12px] md:text-base">expand_more</span>
-                </div>
+        <!-- CAROUSEL DE CHIPS -->
+        <nav class="w-full md:w-auto relative max-w-[100vw] overflow-hidden flex items-center">
+            <div class="fade-mask-left absolute left-0 top-0 bottom-0 w-4 md:w-8 z-10 pointer-events-none transition-colors duration-500"></div>
+            <div class="fade-mask-right absolute right-0 top-0 bottom-0 w-4 md:w-8 z-10 pointer-events-none transition-colors duration-500"></div>
+            
+            <div id="theme-selector-container" class="flex gap-2 md:gap-3 overflow-x-auto hide-scrollbar px-4 md:px-8 py-2 snap-x scroll-smooth items-center">
+                <button data-theme="gta3.json" class="theme-chip active bg-primary text-black snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA III</button>
+                <button data-theme="gta4.json" class="theme-chip bg-surface-dim text-primary snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA IV</button>
+                <button data-theme="vc.json" class="theme-chip bg-surface-dim text-primary snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA Vice City</button>
+                <button data-theme="gtasa.json" class="theme-chip bg-surface-dim text-primary snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA San Andreas</button>
+                <button data-theme="vcs.json" class="theme-chip bg-surface-dim text-primary snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA Vice City Stories</button>
+                <button data-theme="gtav.json" class="theme-chip bg-surface-dim text-primary snap-center flex-shrink-0 px-4 py-1.5 border-2 border-primary text-xs md:text-sm font-label-md cursor-pointer transition-all uppercase whitespace-nowrap shadow-[2px_2px_0px_#000000] -skew-x-3 hover:brightness-110">GTA V</button>
             </div>
         </nav>
     </header>
 
-    <!-- FIX: Agregado touch-pan-y para bloquear el deslizamiento del historial en navegadores móviles -->
-    <main class="main-container touch-pan-y flex-grow flex flex-col justify-center items-center relative z-10 pt-24 pb-32 w-full">
+    <!-- OSD (On-Screen Display) Estilo Windows para Volumen -->
+    <div id="osd-volume" class="fixed top-28 md:top-32 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-4 py-2 md:py-3 bg-surface-dim border-2 border-primary shadow-[4px_4px_0px_#000000] transition-opacity duration-300 opacity-0 pointer-events-none -skew-x-3">
+        <span id="osd-icon" class="material-symbols-outlined text-primary text-xl md:text-2xl">volume_up</span>
+        <div class="w-32 md:w-48 h-2 md:h-3 bg-surface-variant overflow-hidden">
+            <div id="osd-progress" class="h-full bg-secondary-container transition-all duration-100" style="width: 50%;"></div>
+        </div>
+        <span id="osd-text" class="text-primary font-label-md text-sm md:text-base w-8 text-right">50</span>
+    </div>
+
+    <!-- Ajuste pt-28 para compensar el header levemente más alto en móviles -->
+    <main class="main-container touch-pan-y flex-grow flex flex-col justify-center items-center relative z-10 pt-28 pb-32 w-full">
         
         <div class="station-header mb-8 md:mb-12 flex flex-col items-center justify-end fm-text-container text-center px-4 min-h-[65px] md:min-h-[100px]">
             <div id="station-name-top" class="fm-text uppercase font-headline-md tracking-wider transition-colors duration-500 -skew-x-3 text-center">
@@ -240,7 +257,7 @@
             </div>
         </div>
         
-        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v0.90</span>
+        <span class="absolute bottom-1 right-2 md:bottom-2 md:right-4 text-[10px] md:text-xs text-primary opacity-60 font-label-md pointer-events-none transition-colors duration-500">v1.0</span>
     </header>
 
     <audio id="audio-player" crossorigin="anonymous"></audio>
