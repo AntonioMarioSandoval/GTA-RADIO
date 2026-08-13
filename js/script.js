@@ -12,7 +12,7 @@ const state = {
     isMuted: false,
     timeout: null,
     isVisualizerInit: false,
-    osdTimeout: null 
+    osdTimeout: null
 };
 
 // ==========================================
@@ -59,11 +59,11 @@ let audioCtx, analyser, dataArray;
 // 3. CONFIGURACIÓN DE TEMAS
 // ==========================================
 const gameThemes = {
-    'gta3.json': { primary: '#ffd700', secondary: '#9ca3af', bg: '#1a1f24', surface: '#2a3239', footer: '#11161b' },
-    'gta4.json': { primary: '#d1d5db', secondary: '#8b8b83', bg: '#292524', surface: '#3e3835', footer: '#1f1c1a' },
     'vc.json': { primary: '#ffabf3', secondary: '#00fbfb', bg: '#131313', surface: '#523F4C', footer: '#20201f' },
+    'gta3.json': { primary: '#ffd700', secondary: '#9ca3af', bg: '#1a1f24', surface: '#2a3239', footer: '#11161b' },
     'gtasa.json': { primary: '#c5cee9', secondary: '#ffffff', bg: '#010000', surface: '#111111', footer: '#0a0a0a' },
     'vcs.json': { primary: '#14f0d8', secondary: '#f9fa99', bg: '#320049', surface: '#4a006e', footer: '#220033' },
+    'gta4.json': { primary: '#d1d5db', secondary: '#8b8b83', bg: '#292524', surface: '#3e3835', footer: '#1f1c1a' },
     'gtav.json': { primary: '#5c9e31', secondary: '#ffffff', bg: '#0d0f0b', surface: '#1c2417', footer: '#0f140d' }
 };
 
@@ -502,8 +502,8 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // NUEVO: Selección de tema con números (1 al 6)
-    if (e.key >= '1' && e.key <= '6') {
+    // FIX: Selección de tema con números (1 al 6) ignorando combinaciones nativas (Ctrl, Alt, Meta)
+    if (e.key >= '1' && e.key <= '6' && !e.ctrlKey && !e.altKey && !e.metaKey) {
         e.preventDefault();
         const chipIndex = parseInt(e.key) - 1;
         if (dom.themeChips[chipIndex]) {
